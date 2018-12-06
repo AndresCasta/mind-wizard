@@ -169,6 +169,21 @@ export class MathUtils {
 	}
 
 	/**
+ * Get decimal digits of a number
+ * @param {*} num
+ */
+static decimalPlaces (num) {
+	var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+	if (!match) { return ZERO; }
+	return Math.max(
+			ZERO,
+			// Number of digits right of decimal point.
+			(match[ONE] ? match[ONE].length : ZERO) -
+			// Adjust for scientific notation.
+			(match[TWO] ? +match[TWO] : ZERO));
+}
+
+	/**
 	* Find prime factors of a number
 	*/
 	/*
