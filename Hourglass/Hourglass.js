@@ -3,8 +3,7 @@ import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
 import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';
 
 const INTERVAL_DURATION = 0.1;
-const HOURGLASS_SIZE = { x: 17, y: 28 };
-// const HOURGLASS_SAND_WIDTH = 1;
+const MS_TO_S_FACTOR = 1000;
 const HALF_FACTOR = 0.5;
 const ZERO = 0;
 const ONE = 1;
@@ -62,7 +61,7 @@ export class Hourglass extends MindPixiContainer {
      */
 	render () {
 		super.render();
-		
+
 		let scale = this._style.scale;
 		const HOURGLASS_SAND_WIDTH = this._style.doppingSandLineWidth;
 		const AT_BACK_OF_EVERYTHING = ZERO;
@@ -70,100 +69,100 @@ export class Hourglass extends MindPixiContainer {
 
 		// Instance hourglass
 		if (!this._hourglass) {
-
 			// main hourglass sprite
-			//#region 
+			// #region
 			this._hourglass = new MindPixiSprite(this.resources['hourglassSVG'].texture);
 			this._hourglass.scale.set(scale);
 			this.addChild(this._hourglass);
 			this.colliderWidth = this._hourglass.width;
 			this.colliderHeight = this._hourglass.height;
-			//#endregion
-			
+			// #endregion
+
 			// dropping sand line
-			//#region 
+			// #region
 			const HOURGLASS_TOP_BORDER_COMPESATION = 2;
 			this._droppingSandLine = new MindPixiGraphics();
 			this._droppingSandLine.position.set(this.colliderWidth * HALF_FACTOR - HOURGLASS_SAND_WIDTH * HALF_FACTOR,
 				this._hourglass.y + HOURGLASS_TOP_BORDER_COMPESATION);
 			this.addChildAt(this._droppingSandLine, AT_BACK_OF_EVERYTHING);
-			//#endregion
+			// #endregion
 
 			// top sand
-			//#region 
+			// #region
 			this._hourglassSandTop = new MindPixiSprite(this.resources['hourglassSandSVG'].texture);
 			this._hourglassSandTop.position.set(ZERO, ZERO);
 			this._hourglassSandTop.scale.set(scale);
 			this.addChildAt(this._hourglassSandTop, AT_BACK_OF_EVERYTHING);
-			//#endregion
+			// #endregion
 
 			// top sand mask
-			//#region 
+			// #region
 			this._hourglassSandTopMask = new MindPixiGraphics();
 			this._hourglassSandTopMask.position.set(ZERO, this.colliderHeight * HALF_FACTOR);
 			this._hourglassSandTopMask.scale.y = INVERTED_SCALE;
 			this.addChild(this._hourglassSandTopMask);
 			this._hourglassSandTop.mask = this._hourglassSandTopMask;
-			//#endregion
+			// #endregion
 
 			// bottom sand
-			//#region 
+			// #region
 			this._hourglassSandBottom = new MindPixiSprite(this.resources['hourglassSandSVG'].texture);
 			this._hourglassSandBottom.position.set(ZERO, ZERO);
 			this._hourglassSandBottom.scale.set(scale);
 			this.addChildAt(this._hourglassSandBottom, AT_BACK_OF_EVERYTHING);
-			//#endregion
+			// #endregion
 
 			// bottom sand mask
-			//#region 
+			// #region
 			this._hourglassSandBottomMask = new MindPixiGraphics();
 			this._hourglassSandBottomMask.position.set(this._hourglass.x, this._hourglass.height);
 			this._hourglassSandBottomMask.scale.y = INVERTED_SCALE;
 			this.addChild(this._hourglassSandBottomMask);
 			this._hourglassSandBottom.mask = this._hourglassSandBottomMask;
-			//#endregion
+			// #endregion
 
 			// debug
-			// #region 
+			// #region
 			// let dbgRect = new MindPixiGraphics();
-			// dbgRect.beginFill(0xff0000);	
+			// dbgRect.beginFill(0xff0000);
 			// dbgRect.drawRect(0, 0, 5, 5);
 			// dbgRect.beginFill(0xff0000, 0.3);
 			// dbgRect.drawRect(0, 0, this.colliderWidth, this.colliderHeight);
 			// this.addChild(dbgRect);
-			//#endregion
+			// #endregion
 		}
 		// Draw hourglass graphics
 
 		// dropping sand line
-		//#region 
-		this._droppingSandLine.clear(0x000000);
-		this._droppingSandLine.beginFill(0x000000);
+		// #region
+		const DROPPING_LINE_FILL = 0X000000;
+		this._droppingSandLine.clear();
+		this._droppingSandLine.beginFill(DROPPING_LINE_FILL);
 		// const MAGIC_PERCENTAGE = 0.43; // this works, just believe me
 		const MAGIC_COMPENSATION = 4; // this works, just believe me
 		this._droppingSandLine.drawRect(ZERO,
 				Math.min(this.colliderHeight * HALF_FACTOR, this.colliderHeight * HALF_FACTOR * (ONE - this._progress)),
 				HOURGLASS_SAND_WIDTH,
 				this.colliderHeight - MAGIC_COMPENSATION - this.colliderHeight * HALF_FACTOR * (ONE - this._progress));
-		//#endregion
+		// #endregion
 
 		// update bottom mask drawing
-		//#region 
+		// #region
 		const TOP_MASK_FILL = 0x00ff00;
 		this._hourglassSandTopMask.clear();
 		this._hourglassSandTopMask.beginFill(TOP_MASK_FILL);
 		this._hourglassSandTopMask.drawRect(ZERO, ZERO, this.colliderWidth, this.colliderHeight * HALF_FACTOR * this._progress);
 		this._hourglassSandTopMask.endFill();
-		//#endregion
+		// #endregion
 
 		// update bottom mask drawing
-		//#region 
+		// #region
 		const BOTTOM_MASK_FILL = 0xffffff;
 		this._hourglassSandBottomMask.clear();
 		this._hourglassSandBottomMask.beginFill(BOTTOM_MASK_FILL);
 		this._hourglassSandBottomMask.drawRect(ZERO, ZERO, this.colliderWidth, this.colliderHeight * HALF_FACTOR * (ONE - this._progress));
 		this._hourglassSandBottomMask.endFill();
-		//#endregion
+		// #endregion
 	}
 
     /**
@@ -177,14 +176,14 @@ export class Hourglass extends MindPixiContainer {
 
 		this._intervalId = setInterval(function () {
 			_this._timer += INTERVAL_DURATION;
-			_this._progress = 1 - _this._timer / _this._duration;
+			_this._progress = ONE - _this._timer / _this._duration;
 			_this.render();
 
 			if (_this._timer >= _this._duration) {
 				_this.stop();
 				_this._callback();
 			}
-		}, INTERVAL_DURATION * 1000);
+		}, INTERVAL_DURATION * MS_TO_S_FACTOR);
 	}
 
 	stop () {
