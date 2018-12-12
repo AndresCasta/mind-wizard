@@ -2,7 +2,7 @@ import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';
 import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
 import { MathUtils } from './MathUtils';
-import { STROKE, COLOR } from './Constants';
+import { STROKE, COLOR } from '../Constants';
 
 const TAG_RADIUS = 5;
 const PADDING = 4;

@@ -5,7 +5,7 @@ import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';
 import { MindGradient } from 'mind-sdk/MindGradient';
 import { MindTextureManager } from 'mind-sdk/MindTextureManager';
 import { checkLineIntersection } from 'mind-game-components/Utils/MathLib';
-import { STROKE, COLOR, COMMON_NUMBERS } from './Constants';
+import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
 const NO_ALPHA = 1;
 const BLACK = 0x000000;
@@ -198,7 +198,10 @@ export function formatColor (color) {
  * @param {*} lineColor
  */
 export function drawGradientRect (width, height, gradientProperties, lineWidth, lineColor) {
-	let GradientBox = new MindPixiSprite(undefined, { Rng: this.arena.Rng });
+	let container = new MindPixiContainer();
+	let _arena = container.arena;
+
+	let GradientBox = new MindPixiSprite(undefined, { Rng: _arena.Rng });
 	const RESOLUTION_SCALE = 2;
 	const POSITION_ZERO = 0;
 
@@ -220,16 +223,16 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	}
 
 	// we will grab the texture from this container.
-	let container = new MindPixiContainer();
+
 	let newGradientGenerator = new MindGradient(gradientProperties);
 
-	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: this.arena.Rng });
+	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
 
 	let w = gradientSprite.width + lineWidth;
 	let h = gradientSprite.height + lineWidth;
 
-	let renderNoLineTexture = new this.arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
-	this.arena.app.renderer.render(gradientSprite, renderNoLineTexture);
+	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
 	GradientBox._textureNoline = renderNoLineTexture;
 
 	// now draw stroke
@@ -251,8 +254,8 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	let texture = MindTextureManager.getTexture(id);
 
 	if (!texture) {
-		let renderTexture = new this.arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
-		this.arena.app.renderer.render(container, renderTexture);
+		let renderTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+		_arena.app.renderer.render(container, renderTexture);
 		texture = renderTexture;
 		MindTextureManager.saveTexture(id, texture);
 	}
@@ -279,21 +282,24 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
  */
 export function drawGradientCircle (radius, gradientProperties, lineWidth, lineColor, lineAlpha) {
 	let hotpoint = new MindPixiContainer();
+	let _arena = hotpoint.arena;
 
 	// draw circle
-	let hotpointShape = new MindPixiGraphics(false, { Rng: this.arena.Rng });
-	let hotpointBorder = new MindPixiGraphics(false, { Rng: this.arena.Rng });
+	let hotpointShape = new MindPixiGraphics(false, { Rng: _arena.Rng });
+	let hotpointBorder = new MindPixiGraphics(false, { Rng: _arena.Rng });
 	const CENTER_CIRCLE_ANCHOR = 0.5;
 
 	// create a gradient
 	if (gradientProperties === undefined) {
 		gradientProperties = {
 			type: 'linear',
-			w: radius * COMMON_NUMBERS.TWO, 		//     	[Linear/Radial: ending radius of gradient]
-			h: radius * COMMON_NUMBERS.TWO, 		//     	[Linear/Radial: ending radius of gradient]
-			x0: CENTER_CIRCLE_ANCHOR,  	//  	[Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
-			x1: CENTER_CIRCLE_ANCHOR,
-			colorStops: ['#808080', '#808080']
+			w: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			h: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			x0: radius,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+			x1: radius,
+			y1: radius * COMMON_NUMBERS.TWO,
+			colorStops: ['0xA37E5C', '0x6B4D31']
 		};
 	}
 
@@ -317,7 +323,6 @@ export function drawGradientCircle (radius, gradientProperties, lineWidth, lineC
 	hotpoint.fillMaskObject = hotpointShape;
 	hotpoint.borderObject = hotpointBorder;
 
-	this.addChild(hotpoint);
 	return hotpoint;
 }
 
