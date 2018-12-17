@@ -228,8 +228,8 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 
 	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
 
-	let w = gradientSprite.width + lineWidth;
-	let h = gradientSprite.height + lineWidth;
+	let w = gradientSprite.width;
+	let h = gradientSprite.height;
 
 	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
 	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
@@ -246,8 +246,6 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	container.addChild(gradientSprite);
 	container.addChild(graphics);
 	// strokes are not considered in bounds calculations so we must calculate it ourselves.
-	graphics.x += lineWidth * COMMON_NUMBERS.DIV_2;
-	graphics.y += lineWidth * COMMON_NUMBERS.DIV_2;
 
 	// generate the id however, but this is oneway to cache in texture manager.
 	let id = JSON.stringify(gradientProperties) + JSON.stringify(graphics.graphicsData);
@@ -295,11 +293,9 @@ export function drawGradientCircle (radius, gradientProperties, lineWidth, lineC
 			type: 'linear',
 			w: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
 			h: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
-			x0: radius,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
-			y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
-			x1: radius,
-			y1: radius * COMMON_NUMBERS.TWO,
-			colorStops: ['0xA37E5C', '0x6B4D31']
+			x0: CENTER_CIRCLE_ANCHOR, // [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			x1: CENTER_CIRCLE_ANCHOR,
+			colorStops: ['#808080', '#808080']
 		};
 	}
 
