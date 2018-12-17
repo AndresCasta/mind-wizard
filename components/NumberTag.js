@@ -2,7 +2,7 @@ import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';
 import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
 import { MathUtils } from './MathUtils';
-import { STROKE, COLOR } from '../Constants';
+import { COLOR } from '../Constants';
 
 const TAG_RADIUS = 5;
 const PADDING = 4;
@@ -10,6 +10,8 @@ const PADDING = 4;
 export class NumberTag extends MindPixiContainer {
 	constructor (numerator, denominator, usePercent, mindObjectOptions, useSingleValue = false, roundRect = false) {
 		super(mindObjectOptions);
+		let shouldDeprecate = true;
+		if (shouldDeprecate) throw new Error('Avoid using this component, instead use the mind standard Tooltip component available from mind@components 0.5.4\nread more at: https://confluence.mindresearch.org/display/WP/Tooltip');
 
 		this._numerator = numerator;
 		this._denominator = denominator;

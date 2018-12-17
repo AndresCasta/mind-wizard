@@ -1,6 +1,9 @@
+// USE MIND COMPONENT INSTEAD: https://confluence.mindresearch.org/display/WP/Tooltip
+
+
 // mind sdk classes
 import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
-import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';
+//import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';
 import { MindTextureManager } from 'mind-sdk/MindTextureManager';
 import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 
@@ -13,6 +16,8 @@ import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 export class SimpleNumberTag extends MindPixiSprite {
 	constructor (textString, mindObjectOptions) {
 		super(undefined, mindObjectOptions);
+		let shouldDeprecate = true;
+		if (shouldDeprecate) throw new Error('Avoid using this component, instead use the mind standard Tooltip component available from mind@components 0.5.4\\nread more at: https://confluence.mindresearch.org/display/WP/Tooltip');
 
 		// store values
 		this._PIXI = this.arena.PIXI;
