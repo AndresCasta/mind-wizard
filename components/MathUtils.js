@@ -201,10 +201,11 @@ export class MathUtils {
 		let factor = 1;
 		while (!Number.isInteger(currentNumerator) && factor <= MAX_FACTOR) {
 			currentNumerator = numerator * factor;
+			hasEnteredNumeratorLoop = true;
 			factor++;
 		}
 		// if numerator still has decimal part then return false
-		if (!Number.isInteger(currentNumerator)) return { isEquivalentWithoutDecimal: false, numerator: numerator, denominator: denominator }; ;
+		if (!Number.isInteger(currentNumerator)) return { isEquivalentWithoutDecimal: false, numerator: numerator, denominator: denominator, factor: undefined };
 
 		if (hasEnteredNumeratorLoop) {
 			const BEFORE_LAST_UPDATE = 1;
@@ -222,14 +223,14 @@ export class MathUtils {
 			factor++;
 		}
 		// if denominator still has decimal part then return false
-		if (!Number.isInteger(currentDenominator)) return { isEquivalentWithoutDecimal: false, numerator: numerator, denominator: denominator };
+		if (!Number.isInteger(currentDenominator)) return { isEquivalentWithoutDecimal: false, numerator: numerator, denominator: denominator, factor: undefined };
 
 		if (hasEnteredDenominatorLoop) {
 			const BEFORE_LAST_UPDATE = 1;
 			currentNumerator = currentNumerator * (factor - BEFORE_LAST_UPDATE); // update numerator
 		}
 
-		return { isEquivalentWithoutDecimal: true, numerator: currentNumerator, denominator: currentDenominator };
+		return { isEquivalentWithoutDecimal: true, numerator: currentNumerator, denominator: currentDenominator, factor: factor };
 	}
 
 	/**
