@@ -326,3 +326,25 @@ BackButton.HIGH_CONTRAST_BUTTON = 'asset_backButton_hc';
 BackButton.ACTIVE_STATE = 0.33;
 BackButton.INACTIVE_STATE = 0.15;
 BackButton.HOVER_STATE = 0.66;
+
+export const styles = { // add this to the theme using the key 'backButton'
+	'styleToUse': 'default',
+	'default': {
+		'hintColor': '0xFFFFFF',
+		'hintPadding': 5,
+		'hintAlpha': 1,
+		'downFill': '0x000000',
+		'downAlpha': 0.3,
+		'strokeWidth': 2,
+		'showSheen': true
+	},
+	'tactile': {
+		'hintColor': '0xC0C0C0',
+		'hintPadding': 5,
+		'hintAlpha': 1,
+		'downFill': '0x000000',
+		'downAlpha': 0.3,
+		'strokeWidth': 2,
+		'showShee': false
+	}
+}
