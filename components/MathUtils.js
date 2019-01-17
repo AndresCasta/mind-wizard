@@ -79,6 +79,28 @@ export class MathUtils {
 	}
 
 	/**
+	* Simplify a fraction using the (g)reater (c)ommon (d)ivisor between the numerator and denominator
+	* @param {number} numerator The numerator of fraction for simplifying
+	* @param {number} denominator The denominator of fraction for simplifying
+	* @returns {object} Numerator and denominator simplified, the same otherwise
+	*/
+	static simplify (numerator, denominator) {
+		var gcd = function gcd (a, b) {
+			return b ? gcd(b, a % b) : a;
+		};
+		gcd = gcd(numerator, denominator);
+
+		// simplify only if gcd is a number
+		if (MathUtils.isInt(gcd)) {
+			let numeratorSimplified = numerator / gcd;
+			let denominatorSimplified = denominator / gcd;
+
+			return { numerator: numeratorSimplified, denominator: denominatorSimplified };
+		}
+		return { numerator: numerator, denominator: denominator };
+	}
+
+	/**
 	 * Turn on the bit at given 'index' in the respective 'mask'
 	 * @param {number} mask number representing a mask of bits
 	 * @param {number} index the index for set as one in the vector of bits
