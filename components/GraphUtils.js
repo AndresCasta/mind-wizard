@@ -197,12 +197,12 @@ export function formatColor (color) {
  * @param {*} lineWidth
  * @param {*} lineColor
  */
-export function drawGradientRect (width, height, gradientProperties, lineWidth, lineColor) {
+export function drawGradientRect (width, height, gradientProperties, lineWidth, lineColor, lineAlpha = COLOR.ALPHA_BLACK_2) {
 	let container = new MindPixiContainer();
 	let _arena = container.arena;
 
-	let GradientBox = new MindPixiSprite(undefined, { Rng: _arena.Rng });
-	const RESOLUTION_SCALE = 2;
+	// let GradientBox = new MindPixiSprite(undefined, { Rng: _arena.Rng });
+	// const RESOLUTION_SCALE = 2;
 	const POSITION_ZERO = 0;
 
 	// create a linear gradient
@@ -228,16 +228,9 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 
 	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
 
-	let w = gradientSprite.width;
-	let h = gradientSprite.height;
-
-	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
-	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
-	GradientBox._textureNoline = renderNoLineTexture;
-
 	// now draw stroke
 	let graphics = new MindPixiGraphics();
-	graphics.lineStyle(lineWidth, lineColor);
+	graphics.lineStyle(lineWidth, lineColor, lineAlpha);
 	graphics.drawRect(POSITION_ZERO, POSITION_ZERO, gradientSprite.width, gradientSprite.height, COLOR.NO_ALPHA);
 	graphics.endFill();
 
@@ -247,27 +240,20 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	container.addChild(graphics);
 	// strokes are not considered in bounds calculations so we must calculate it ourselves.
 
-	// generate the id however, but this is oneway to cache in texture manager.
-	let id = JSON.stringify(gradientProperties) + JSON.stringify(graphics.graphicsData);
-	let texture = MindTextureManager.getTexture(id);
+	container.gradientSprite = gradientSprite;
+	container.border = graphics;
 
-	if (!texture) {
-		let renderTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
-		_arena.app.renderer.render(container, renderTexture);
-		texture = renderTexture;
-		MindTextureManager.saveTexture(id, texture);
-	}
-	GradientBox.texture = texture;
+	container.reDraw = (newGadientProperties = gradientProperties, newLineWidth = lineWidth, newLineColor = lineColor, newLineAlpha = lineAlpha) => {
+		let gradientGenerator = new MindGradient(newGadientProperties);
+		container.gradientSprite.texture = gradientGenerator.Texture();
 
-	GradientBox._mainTexture = texture;
+		container.border.clear();
+		container.border.lineStyle(newLineWidth, newLineColor, newLineAlpha);
+		container.border.drawRect(POSITION_ZERO, POSITION_ZERO, container.gradientSprite.width, container.gradientSprite.height, COLOR.NO_ALPHA);
+		container.border.endFill();
+	};
 
-	// destroy container
-	container.destroy(true);
-	if (container.parent) {
-		container.parent.removeChild(container);
-	}
-
-	return GradientBox;
+	return container;
 }
 
 /**
@@ -323,6 +309,87 @@ export function drawGradientCircle (radius, gradientProperties, lineWidth, lineC
 }
 
 /**
+ * Return a texture of a gradient with a stroke  
+ * @param {*} width 
+ * @param {*} height 
+ * @param {*} gradientProperties 
+ * @param {*} lineWidth 
+ * @param {*} lineColor 
+ * @param {*} lineAlpha 
+ */
+export function drawGradientRectTexture (width, height, gradientProperties, lineWidth, lineColor, lineAlpha = COLOR.ALPHA_BLACK_2) {
+	/**
+	 * Note: This function have issues with the width of the stroke 
+	 */
+
+	let container = new MindPixiContainer();
+	let _arena = container.arena;
+
+	const RESOLUTION_SCALE = 2;
+	// const POSITION_ZERO = 0;
+
+	// create a linear gradient
+	let gradientW = width;
+	let gradientH = height;
+
+	if (gradientProperties === undefined) {
+		gradientProperties = {
+			type: 'linear',
+			w: gradientW, //     [Linear/Radial: ending radius of gradient]
+			h: gradientH, //     [Linear/Radial: ending radius of gradient]
+			x0: 25,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+			x1: 25,
+			y1: gradientH,
+			colorStops: COLOR.PLATFORM_GRADIENT
+		};
+	}
+
+	// we will grab the texture from this container.
+
+	let newGradientGenerator = new MindGradient(gradientProperties);
+
+	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
+
+	let w = gradientSprite.width;
+	let h = gradientSprite.height;
+
+	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
+
+	// now draw stroke
+	let graphics = new MindPixiGraphics();
+	graphics.lineStyle(lineWidth * COMMON_NUMBERS.TWO, lineColor, lineAlpha);
+	graphics.drawRect(lineWidth * COMMON_NUMBERS.DIV_2, lineWidth * COMMON_NUMBERS.DIV_2, gradientSprite.width - lineWidth * COMMON_NUMBERS.DIV_2, gradientSprite.height - lineWidth * COMMON_NUMBERS.DIV_2, COLOR.NO_ALPHA);
+	graphics.endFill();
+
+	// add both the gradient and the stroke into the container.
+	// if you want to add the stroke on top, addChild it after.
+	container.addChild(gradientSprite);
+	container.addChild(graphics);
+	// strokes are not considered in bounds calculations so we must calculate it ourselves.
+
+	// generate the id however, but this is oneway to cache in texture manager.
+	let id = JSON.stringify(gradientProperties) + JSON.stringify(graphics.graphicsData);
+	let texture = MindTextureManager.getTexture(id);
+
+	if (!texture) {
+		let renderTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+		_arena.app.renderer.render(container, renderTexture);
+		texture = renderTexture;
+		MindTextureManager.saveTexture(id, texture);
+	}
+
+	// destroy container
+	container.destroy(true);
+	if (container.parent) {
+		container.parent.removeChild(container);
+	}
+
+	return texture;
+}
+
+/**
  * Draw minus block
  * @param {*} width
  * @param {*} height
@@ -332,8 +399,9 @@ export function drawMinusBlock (width, height) {
 	const POSITION_ZERO = 0;
 
 	let _block = new MindPixiGraphics();
+	let _arena = _block.arena;
 
-	let _styleObj = this.arena.theme.getStyles('minusBlock');
+	let _styleObj = _arena.theme.getStyles('minusBlock');
 	let _style = _styleObj[_styleObj.styleToUse];
 
 	let blockHeight = height;
@@ -393,11 +461,53 @@ export function drawMinusBlock (width, height) {
 	_block.lineStyle(_style.blockStrokeWidth, _style.blockStrokeColor, COLOR.NO_ALPHA);
 	_block.drawRect(POSITION_ZERO, POSITION_ZERO, blockWidth, blockHeight);
 
+	_block.reDraw = () => {
+		let _styleObj = _arena.theme.getStyles('minusBlock');
+		let _style = _styleObj[_styleObj.styleToUse];
+
+		_block.clear();
+		_block.lineStyle(_style.lineWidth, _style.lineColor, NO_ALPHA);
+
+		let resetValue = 0;
+		dist = resetValue;
+		for (let i = 0; i < numLines; i++) {
+			dist += lineSpace;
+			let lineStart = { x: 0, y: dist };
+			let lineEnd = { x: dist, y: 0 };
+
+			if (dist <= blockWidth && dist >= blockHeight) {
+				let intersectBottom = checkLineIntersection(lineStart, lineEnd, bottomLineStart, bottomLineEnd);
+				_block.moveTo(intersectBottom.x, intersectBottom.y);
+				_block.lineTo(lineEnd.x, lineEnd.y);
+			} else if (dist <= blockWidth) {
+				//
+				_block.moveTo(lineStart.x, lineStart.y);
+				_block.lineTo(lineEnd.x, lineEnd.y);
+			} else if (dist <= blockHeight) {
+				let intersectRight = checkLineIntersection(lineStart, lineEnd, rightLineStart, rightLineEnd);
+				_block.moveTo(lineStart.x, lineStart.y);
+				_block.lineTo(intersectRight.x, intersectRight.y);
+			} else {
+				let intersectRight = checkLineIntersection(lineStart, lineEnd, rightLineStart, rightLineEnd);
+				let intersectBottom = checkLineIntersection(lineStart, lineEnd, bottomLineStart, bottomLineEnd);
+				_block.moveTo(intersectBottom.x, intersectBottom.y);
+				_block.lineTo(intersectRight.x, intersectRight.y);
+			}
+
+			dist += _style.lineWidth;
+		}
+
+		// Draw block
+
+		_block.lineStyle(_style.blockStrokeWidth, _style.blockStrokeColor, COLOR.NO_ALPHA);
+		_block.drawRect(POSITION_ZERO, POSITION_ZERO, blockWidth, blockHeight);
+	};
+
 	return _block;
 }
 
 /**
- * Add this to the theme if you nedd draw a minus block
+ * Add this to the theme if you need draw a minus block
  */
 export const minusBlockStyle = {
 	'styleToUse': 'default',
