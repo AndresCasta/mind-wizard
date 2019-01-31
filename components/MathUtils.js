@@ -265,6 +265,19 @@ export class MathUtils {
 		const ONE = 1;
 		return n % ONE === ZERO;
 	}
+	
+	/**
+	 * verify if a number is prime
+	 * @param {*} value
+	 */
+	static isPrime (value) {
+		for (var i = 2; i < value; i++) {
+			if (value % i === 0) {
+				return false;
+			}
+		}
+		return value > 1;
+	}
 
 	/**
 	 * Find prime factors of a number

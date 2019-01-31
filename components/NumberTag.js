@@ -367,12 +367,12 @@ export class NumberTag extends MindPixiContainer {
 	}
 }
 
-export fontStyles = {
+export const fontStyles = {
 	'fontSize': 16,
 	'fill': COLOR.WHITE
-}
+};
 
-export styles {
+export const styles = {
 	'fill': COLOR.WHITE,
 	'stroke': 1.5
-}
+};
