@@ -272,12 +272,13 @@ export class MathUtils {
 	 */
 	static isPrime (value) {
 		for (var i = 2; i < value; i++) {
-			if (value % i === 0) {
+			if (value % i === ZERO) {
 				return false;
 			}
 		}
-		return value > 1;
+		return value > ONE;
 	}
+
 
 	/**
 	 * Find prime factors of a number
@@ -303,6 +304,7 @@ export class MathUtils {
 
 		return primeFactors;
 	}
+	
 
 	/**
 	 * Analyze fraction and check for periodic decimals
