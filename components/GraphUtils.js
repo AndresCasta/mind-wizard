@@ -4,7 +4,7 @@ import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';
 import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';
 import { MindGradient } from 'mind-sdk/MindGradient';
 import { MindTextureManager } from 'mind-sdk/MindTextureManager';
-import { checkLineIntersection } from 'mind-game-components/Utils/MathLib';
+import { checkLineIntersection } from 'mind-game-components/utils/MathLib';
 import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
 const NO_ALPHA = 1;
@@ -22,7 +22,6 @@ const THIRD_POSITION = 2;
 export function drawDashedPolygon (polygons, x, y, rotation, dash, gap, offsetPercentage) {
 	let LinesGraphics = new MindPixiGraphics();
 	LinesGraphics.lineStyle(STROKE.STROKE_THIN, BLACK, NO_ALPHA);
-	this.addChild(LinesGraphics);
 	let p1;
 	let p2;
 	let dashLeft = 0;
@@ -97,6 +96,23 @@ export function generateCircle (nSegments, rad) {
 	for (let i = 0; i < nSegments; i++)		{
 		polygons.push({ x: Math.cos(i * nAngleSeg) * rad, y: Math.sin(i * nAngleSeg) * rad });
 	}
+	return polygons;
+}
+
+/**
+*
+* Generate polygons to create a Rect using dashed lines
+*
+*/
+
+export function generateRect (w, h) {
+	let polygons = [];
+
+	polygons.push({ x: 0, y: 0 });
+	polygons.push({ x: w, y: 0 });
+	polygons.push({ x: w, y: h });
+	polygons.push({ x: 0, y: h });
+
 	return polygons;
 }
 
@@ -228,6 +244,14 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 
 	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
 
+	// let w = gradientSprite.width;
+	// let h = gradientSprite.height;
+
+	/*
+	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
+	GradientBox._textureNoline = renderNoLineTexture;
+	*/
 	// now draw stroke
 	let graphics = new MindPixiGraphics();
 	graphics.lineStyle(lineWidth, lineColor, lineAlpha);
@@ -256,72 +280,7 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	return container;
 }
 
-/**
- *
- * @param {*} radius
- * @param {*} gradientProperties
- * @param {*} lineWidth
- * @param {*} lineColor
- * @param {*} lineAlpha
- */
-export function drawGradientCircle (radius, gradientProperties, lineWidth, lineColor, lineAlpha) {
-	let hotpoint = new MindPixiContainer();
-	let _arena = hotpoint.arena;
-
-	// draw circle
-	let hotpointShape = new MindPixiGraphics(false, { Rng: _arena.Rng });
-	let hotpointBorder = new MindPixiGraphics(false, { Rng: _arena.Rng });
-	const CENTER_CIRCLE_ANCHOR = 0.5;
-
-	// create a gradient
-	if (gradientProperties === undefined) {
-		gradientProperties = {
-			type: 'linear',
-			w: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
-			h: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
-			x0: CENTER_CIRCLE_ANCHOR, // [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
-			x1: CENTER_CIRCLE_ANCHOR,
-			colorStops: ['#808080', '#808080']
-		};
-	}
-
-	// draw the hotpoint shape
-	hotpointShape.beginFill(COLOR.BLACK);
-	hotpointShape.drawCircle(radius, radius, radius).endFill();
-	hotpoint.addChild(hotpointShape);
-
-	// draw gradient
-	let gradientSprite = new MindPixiSprite();
-	gradientSprite.texture = (new MindGradient(gradientProperties)).Texture();
-	gradientSprite.mask = hotpointShape;
-	hotpoint.addChild(gradientSprite);
-
-	// draw the hotpoint border
-	hotpointBorder.lineStyle(lineWidth, lineColor, lineAlpha);
-	hotpointBorder.drawCircle(radius, radius, radius).endFill();
-	hotpoint.addChild(hotpointBorder);
-
-	hotpoint.fillObject = gradientSprite;
-	hotpoint.fillMaskObject = hotpointShape;
-	hotpoint.borderObject = hotpointBorder;
-
-	return hotpoint;
-}
-
-/**
- * Return a texture of a gradient with a stroke  
- * @param {*} width 
- * @param {*} height 
- * @param {*} gradientProperties 
- * @param {*} lineWidth 
- * @param {*} lineColor 
- * @param {*} lineAlpha 
- */
 export function drawGradientRectTexture (width, height, gradientProperties, lineWidth, lineColor, lineAlpha = COLOR.ALPHA_BLACK_2) {
-	/**
-	 * Note: This function have issues with the width of the stroke 
-	 */
-
 	let container = new MindPixiContainer();
 	let _arena = container.arena;
 
@@ -384,6 +343,113 @@ export function drawGradientRectTexture (width, height, gradientProperties, line
 	container.destroy(true);
 	if (container.parent) {
 		container.parent.removeChild(container);
+	}
+
+	return texture;
+}
+
+/**
+ *
+ * @param {*} radius
+ * @param {*} gradientProperties
+ * @param {*} lineWidth
+ * @param {*} lineColor
+ * @param {*} lineAlpha
+ */
+export function drawGradientCircle (radius, gradientProperties, lineWidth, lineColor, lineAlpha) {
+	let hotpoint = new MindPixiContainer();
+	let _arena = hotpoint.arena;
+
+	// draw circle
+	let hotpointShape = new MindPixiGraphics(false, { Rng: _arena.Rng });
+	let hotpointBorder = new MindPixiGraphics(false, { Rng: _arena.Rng });
+	const CENTER_CIRCLE_ANCHOR = 0.5;
+
+	// create a gradient
+	if (gradientProperties === undefined) {
+		gradientProperties = {
+			type: 'linear',
+			w: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			h: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			x0: CENTER_CIRCLE_ANCHOR, // [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			x1: CENTER_CIRCLE_ANCHOR,
+			colorStops: ['#808080', '#808080']
+		};
+	}
+
+	// draw the hotpoint shape
+	hotpointShape.beginFill(COLOR.BLACK);
+	hotpointShape.drawCircle(radius, radius, radius).endFill();
+	hotpoint.addChild(hotpointShape);
+
+	// draw gradient
+	let gradientSprite = new MindPixiSprite();
+	gradientSprite.texture = (new MindGradient(gradientProperties)).Texture();
+	gradientSprite.mask = hotpointShape;
+	hotpoint.addChild(gradientSprite);
+
+	// draw the hotpoint border
+	hotpointBorder.lineStyle(lineWidth, lineColor, lineAlpha);
+	hotpointBorder.drawCircle(radius, radius, radius).endFill();
+	hotpoint.addChild(hotpointBorder);
+
+	hotpoint.fillObject = gradientSprite;
+	hotpoint.fillMaskObject = hotpointShape;
+	hotpoint.borderObject = hotpointBorder;
+
+	return hotpoint;
+}
+
+export function drawGradientCircleTexture (radius, gradientProperties, lineWidth, lineColor, lineAlpha) {
+	let hotpoint = new MindPixiContainer();
+	let _arena = hotpoint.arena;
+
+	// draw circle
+	let hotpointShape = new MindPixiGraphics(false, { Rng: _arena.Rng });
+	let hotpointBorder = new MindPixiGraphics(false, { Rng: _arena.Rng });
+	const CENTER_CIRCLE_ANCHOR = 0.5;
+	const RESOLUTION_SCALE = 4;
+
+	// create a gradient
+	if (gradientProperties === undefined) {
+		gradientProperties = {
+			type: 'linear',
+			w: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			h: radius * COMMON_NUMBERS.TWO, // [Linear/Radial: ending radius of gradient]
+			x0: CENTER_CIRCLE_ANCHOR, // [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			x1: CENTER_CIRCLE_ANCHOR,
+			colorStops: ['#808080', '#808080']
+		};
+	}
+
+	// draw the hotpoint shape
+	hotpointShape.beginFill(COLOR.BLACK);
+	hotpointShape.drawCircle(radius, radius, radius).endFill();
+	hotpoint.addChild(hotpointShape);
+
+	// draw gradient
+	let gradientSprite = new MindPixiSprite();
+	gradientSprite.texture = (new MindGradient(gradientProperties)).Texture();
+	gradientSprite.mask = hotpointShape;
+	hotpoint.addChild(gradientSprite);
+
+	// draw the hotpoint border
+	hotpointBorder.lineStyle(lineWidth, lineColor, lineAlpha);
+	hotpointBorder.drawCircle(radius, radius, radius).endFill();
+	hotpoint.addChild(hotpointBorder);
+
+	hotpoint.fillObject = gradientSprite;
+	hotpoint.fillMaskObject = hotpointShape;
+	hotpoint.borderObject = hotpointBorder;
+
+	let id = JSON.stringify(gradientProperties) + JSON.stringify(hotpointShape.graphicsData);
+	let texture = MindTextureManager.getTexture(id);
+
+	if (!texture) {
+		let renderTexture = new _arena.PIXI.RenderTexture.create(hotpoint.width, hotpoint.height, undefined, RESOLUTION_SCALE);
+		_arena.app.renderer.render(hotpoint, renderTexture);
+		texture = renderTexture;
+		MindTextureManager.saveTexture(id, texture);
 	}
 
 	return texture;
@@ -507,7 +573,7 @@ export function drawMinusBlock (width, height) {
 }
 
 /**
- * Add this to the theme if you need draw a minus block
+ * Add this to the theme if you nedd draw a minus block
  */
 export const minusBlockStyle = {
 	'styleToUse': 'default',

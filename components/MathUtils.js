@@ -69,7 +69,7 @@ export class MathUtils {
 		return newPoint;
 	}
 
-    /**
+	/**
 	 * Calculate the middle point of a number set,
 	 * in which half the numbers are above the median and half are below
 	 * @param {number} n the nums of elements on a set number
@@ -132,7 +132,7 @@ export class MathUtils {
 		return MathUtils.vectorAdd(aInv, bt);
 	}
 
-    /**
+	/**
 	 * Returns a random integer between min (inclusive) and max (inclusive)
 	 * Using Math.round() will give you a non-uniform distribution!
 	 */
@@ -199,11 +199,54 @@ export class MathUtils {
 		var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
 		if (!match) { return ZERO; }
 		return Math.max(
-				ZERO,
-				// Number of digits right of decimal point.
-				(match[ONE] ? match[ONE].length : ZERO) -
+			ZERO,
+			// Number of digits right of decimal point.
+			(match[ONE] ? match[ONE].length : ZERO) -
 				// Adjust for scientific notation.
 				(match[TWO] ? +match[TWO] : ZERO));
+	}
+
+	/**
+	 * get the min value in an array
+	 * @param {*} arr
+	 */
+	static arrayMin (arr) {
+		var len = arr.length; var min = Infinity;
+		while (len--) {
+			if (Number(arr[len]) < min) {
+				min = Number(arr[len]);
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * get the max value in an array
+	 * @param {*} arr
+	 */
+	static arrayMax (arr) {
+		var len = arr.length; var max = -Infinity;
+		while (len--) {
+			if (Number(arr[len]) > max) {
+				max = Number(arr[len]);
+			}
+		}
+		return max;
+	};
+
+	/**
+	 * Get all divisors of an integer
+	 * @param {*} N
+	 * @returns {array}
+	 */
+	static getDivisors (N) {
+		let divisors = [];
+		for (let i = 1; i < N; i++) {
+			if (N % i === ZERO) {
+				divisors.push(i);
+			}
+		}
+		return divisors;
 	}
 
 	/**
@@ -256,7 +299,7 @@ export class MathUtils {
 	}
 
 	/**
-	 * Chekc if a ginven number is int or float
+	 * Check if a ginven number is int or float
 	 * @param {number} n number for checking
 	 * @returns {boolean} flag indicating if respective number is float or number
 	 */
@@ -265,10 +308,11 @@ export class MathUtils {
 		const ONE = 1;
 		return n % ONE === ZERO;
 	}
-	
+
 	/**
 	 * verify if a number is prime
 	 * @param {*} value
+	 * @returns {boolean} flag indicating if respective number is float or number
 	 */
 	static isPrime (value) {
 		for (var i = 2; i < value; i++) {
@@ -279,7 +323,6 @@ export class MathUtils {
 		return value > ONE;
 	}
 
-
 	/**
 	 * Find prime factors of a number
 	 * @param {number} a number for searching its prime factors
@@ -288,10 +331,10 @@ export class MathUtils {
 	static primeFactors (a) {
 		let primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]; // eslint-disable-line no-magic-numbers
 
-		var primeFactors = [];
+		let primeFactors = [];
 
 		// Trial division algorithm
-		for (var i = ZERO, p = primeNumbers[i]; i < primeNumbers.length && p * p <= a; i++, p = primeNumbers[i]) {
+		for (let i = ZERO, p = primeNumbers[i]; i < primeNumbers.length && p * p <= a; i++, p = primeNumbers[i]) {
 			while (a % p === ZERO) {
 				primeFactors.push(p);
 				a /= p;
@@ -304,7 +347,37 @@ export class MathUtils {
 
 		return primeFactors;
 	}
-	
+
+	/**
+	 * return array of prime factors with out repeat
+	 * @param {*} N
+	 * @returns {Array} // the key in the array is the base and the values is the exponent
+	 */
+	static primeFactorsAlt (N) {
+		let p = 2;
+		let primeFactors = [];
+		const ONE_ELEMENT = 1;
+		while (N >= p * p) {
+			if (N % p === ZERO) {
+				if (primeFactors[p]) {
+					primeFactors[p] += ONE_ELEMENT;
+				} else {
+					primeFactors[p] = ONE_ELEMENT;
+				}
+				N /= p;
+			} else {
+				p++;
+			}
+		}
+
+		if (primeFactors[N]) {
+			primeFactors[N] += ONE_ELEMENT;
+		} else {
+			primeFactors[N] = ONE_ELEMENT;
+		}
+
+		return primeFactors;
+	}
 
 	/**
 	 * Analyze fraction and check for periodic decimals
