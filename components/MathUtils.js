@@ -197,34 +197,20 @@ export class MathUtils {
 	 * @returns {number} uint24_t number representing the mix
 	 */
 	static mixColor (t, colorA, colorB) {
-		// TODO: avoid conversion betwen num to strings and use bitwise operators for unpacking vector data
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
 
-		// convert scalar to vectors
-		const colorAstr = MathUtils.decimalToHexStr(colorA);
-		const colorBstr = MathUtils.decimalToHexStr(colorB);
+		const colorAvec = MathUtils.vector3((colorA & RED_MASK) >> RED_SHIFT, (colorA & GREEN_MASK) >> GREEN_SHIFT, (colorA & BLUE_MASK) >> BLUE_SHIFT);
+		const colorBvec = MathUtils.vector3((colorB & RED_MASK) >> RED_SHIFT, (colorB & GREEN_MASK) >> GREEN_SHIFT, (colorB & BLUE_MASK) >> BLUE_SHIFT);
 
-		const colorAvec = MathUtils.vector3('0x' + colorAstr[ZERO] + colorAstr[ONE], '0x' + colorAstr[TWO] + colorAstr[THREE], '0x' + colorAstr[FOUR] + colorAstr[FIVE]);
-		const colorBvec = MathUtils.vector3('0x' + colorBstr[ZERO] + colorBstr[ONE], '0x' + colorBstr[TWO] + colorBstr[THREE], '0x' + colorBstr[FOUR] + colorBstr[FIVE]);
-
-		// mix vec3 vectors representing colors
 		const mixedColor = MathUtils.vector3Mix(t, colorAvec, colorBvec);
 
-		// convert vector component to hex string
-		let rStr = Number.parseInt(mixedColor.x).toString(HEX);
-		let gStr = Number.parseInt(mixedColor.y).toString(HEX);
-		let bStr = Number.parseInt(mixedColor.z).toString(HEX);
+		let rInt8 = Number.parseInt(mixedColor.x);
+		let gInt8 = Number.parseInt(mixedColor.y);
+		let bInt8 = Number.parseInt(mixedColor.z);
 
-		// guarantee 2 hex digits
-		if (rStr.length === ONE) rStr = '0' + rStr;
-		if (gStr.length === ONE) gStr = '0' + gStr;
-		if (bStr.length === ONE) bStr = '0' + bStr;
-
-		const isInvalidColorRange = rStr.length > TWO || gStr.length > TWO || bStr.length > TWO;
-		
-		if (isInvalidColorRange) throw new Error('Invalid color range for a color component');
-		
-		let result = '0x' + rStr + gStr + bStr;
-		return Number(result);
+		return (rInt8 << RED_SHIFT) | (gInt8 << GREEN_SHIFT) | bInt8;
 	}
 
 	static vector2 (x, y) {
