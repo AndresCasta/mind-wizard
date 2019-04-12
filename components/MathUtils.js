@@ -189,8 +189,8 @@ export class MathUtils {
 
 	/**
 	 * @author Romualdo Villalobos
-	 * Convert uint24_t color to vector3 and performs linear interpolation between colorA and colorB,
-	 * then concatenate components and returns an uint24_t number
+	 * Convert uint24_t (8bits per channel) color to vector3 and performs linear interpolation between colorA and colorB,
+	 * then concatenate components and returns final vector encoded on a uint24_t number
 	 * @param {number} t interpolation factor
 	 * @param {number} colorA uint24_t number representing a color
 	 * @param {number} colorB uint24_t number representing a color
