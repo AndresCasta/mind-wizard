@@ -2,6 +2,8 @@ const DEG_180 = 180;
 const ZERO = 0;
 const ONE = 1;
 const TWO = 2;
+const THREE = 3;
+const FOUR = 4;
 const FIVE = 5;
 const SIX = 6;
 const HEX = 16;
@@ -32,6 +34,10 @@ export class MathUtils {
 		return { x: vector.x * factor, y: vector.y * factor };
 	}
 
+	static vector3Scale (vector, factor) {
+		return { x: vector.x * factor, y: vector.y * factor, z: vector.z * factor };
+	}
+
 	static vectorLen (vector) {	// magnitude
 		return Math.sqrt(Math.pow(vector.x, TWO) + Math.pow(vector.y, TWO));
 	}
@@ -53,6 +59,10 @@ export class MathUtils {
 	// a + b
 	static vectorAdd (a, b) {
 		return { x: a.x + b.x, y: a.y + b.y };
+	}
+
+	static vector3Add (a, b) {
+		return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z };
 	}
 
 	// get the slope between two points
@@ -133,6 +143,20 @@ export class MathUtils {
 	}
 
 	/**
+	* Calculate the linear interpolation between vector a and b
+	* in the dir a -> b
+	* @param {number} t interpolation factor
+	* @param {point} a when t = 0 mix() returns a
+	* @param {point} b when t = 1 mix() returns b
+	*/
+	static vector3Mix (t, a, b) {
+		// a + (b - a)t = a + bt - at = a - at + bt = a(1 - t) + bt
+		let bt = MathUtils.vector3Scale(b, t);
+		let aInv = MathUtils.vector3Scale(a, ONE - t);
+		return MathUtils.vector3Add(aInv, bt);
+	}
+
+	/**
 	 * Returns a random integer between min (inclusive) and max (inclusive)
 	 * Using Math.round() will give you a non-uniform distribution!
 	 */
@@ -143,7 +167,6 @@ export class MathUtils {
 	/**
 	* Convert decimal number in format hexadecimal
 	*/
-
 	static decToHex (d) {
 		let hex = Number(d).toString(HEX);
 		hex = '000000'.substr(ZERO, SIX - hex.length) + hex;
@@ -153,7 +176,7 @@ export class MathUtils {
 	/**
 	*	Version 2, could be useful to convert number to hex with length  < 6
 	*/
-	static decimalToHex (d, padding) {
+	static decimalToHexStr (d, padding = SIX) {
 		var hex = Number(d).toString(HEX);
 		padding = typeof (padding) === 'undefined' || padding === null ? padding = TWO : padding;
 
@@ -163,6 +186,62 @@ export class MathUtils {
 
 		return hex;
 	}
+
+	/**
+	 * @author Romualdo Villalobos
+	 * Convert uint24_t color to vector3 and performs linear interpolation between colorA and colorB,
+	 * then concatenate components and returns an uint24_t number
+	 * @param {number} colorA uint24_t number representing a color
+	 * @param {number} colorB uint24_t number representing a color
+	 * @returns {number} uint24_t number representing the mix
+	 */
+	static mixColor (t, colorA, colorB) {
+		// TODO: avoid conversion betwen num to strings and use bitwise operators for unpacking vector data
+
+		// convert scalar to vectors
+		const colorAstr = MathUtils.decimalToHexStr(colorA);
+		const colorBstr = MathUtils.decimalToHexStr(colorB);
+
+		const colorAvec = MathUtils.vector3('0x' + colorAstr[ZERO] + colorAstr[ONE], '0x' + colorAstr[TWO] + colorAstr[THREE], '0x' + colorAstr[FOUR] + colorAstr[FIVE]);
+		const colorBvec = MathUtils.vector3('0x' + colorBstr[ZERO] + colorBstr[ONE], '0x' + colorBstr[TWO] + colorBstr[THREE], '0x' + colorBstr[FOUR] + colorBstr[FIVE]);
+
+		// mix vec3 vectors representing colors
+		const mixedColor = MathUtils.vector3Mix(t, colorAvec, colorBvec);
+
+		// convert vector component to hex string
+		let rStr = Number.parseInt(mixedColor.x).toString(HEX);
+		let gStr = Number.parseInt(mixedColor.y).toString(HEX);
+		let bStr = Number.parseInt(mixedColor.z).toString(HEX);
+
+		// guarantee 2 hex digits
+		if (rStr.length === ONE) rStr = '0' + rStr;
+		if (gStr.length === ONE) gStr = '0' + gStr;
+		if (bStr.length === ONE) bStr = '0' + bStr;
+
+		const isInvalidColorRange = rStr.length > TWO || gStr.length > TWO || bStr.length > TWO;
+		
+		if (isInvalidColorRange) throw new Error('Invalid color range for a color component');
+		
+		let result = '0x' + rStr + gStr + bStr;
+		return Number(result);
+	}
+
+	static vector2 (x, y) {
+		return {
+			x: Number(x),
+			y: Number(y)
+		}
+	}
+
+	static vector3 (x, y, z) {
+		return {
+			x: Number(x),
+			y: Number(y),
+			z: Number(z)
+		}
+	}
+
+
 
 	static getDigitCount (number) {
 		return Math.max(Math.floor(Math.log10(Math.abs(number))), ZERO) + ONE;
