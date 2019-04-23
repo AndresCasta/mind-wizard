@@ -1,6 +1,8 @@
 # GulpTasks Cool
 Esta es una version mejorada de las tareas definidas por defecto por mind. Entre las nuevas tareas podras encontrar las siguientes:
 
+*NOTA: Se recomienda tener el terminal en el directorio raiz del proyecto antes de ejecutar estos comandos.*
+
 ## gulp configureProject
 Con esta tarea podras crear una nueva arena a partir de una arena plantilla, (por defecto se utiliza ExampleGame como plantilla). Esta tarea simplifica significativamente el proceso de iniciar un nuevo proyecto ya que hara por ti lo siguiente:
 
