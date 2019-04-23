@@ -61,7 +61,13 @@ Adicionalmente la tarea se quedara escuchando la ruta especificada de forma recu
 ### Ejemplo
 Supongamos la siguiente estructura de archivos en: **assets/ExampleGame**
 
-![](https://imgur.com/UtkQRJw.gif)
+Para importar todos los svg facilmente ejecutamos el siguiente comando:
+```bash
+gulp assetImporter ---src ./assets/ExampleGame
+```
+
+![](https://imgur.com/zhWyf5h.gif)
+
 
 ## gulp cropSvg
 Esta tarea esta pensada para remplazar cropSvg.js hace exactamente lo mismo, ademas no necesita que el usuario agregue a la variable de entorno PATH del sistema la ubicación de inkscape.
