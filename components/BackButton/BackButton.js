@@ -4,9 +4,14 @@ import MindSVG from 'mind-sdk/MindSVG';
 import { MindTextureManager } from 'mind-sdk/MindTextureManager';
 import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
 
+const ANCHOR_MIDDLE = 0.5;
+const DIV_2 = 0.5;
+const ZERO = 0;
+const ONE = 1;
+
 export class BackButton extends Button {
 	constructor (mindObjectOptions, themeId = 'backButton') {
-		super(1, 1, mindObjectOptions);
+		super(ONE, ONE, mindObjectOptions);
 
 		let isHC = this.arena.theme.getStyles(themeId).styleToUse === 'tactile';
 
@@ -20,8 +25,8 @@ export class BackButton extends Button {
 		let svgButton = MindSVG.fromResource(resource);
 		let resourceWidth = svgButton.getWidth();
 		let resourceHeight = svgButton.getHeight();
-		this._width = resourceWidth / 2;
-		this._height = resourceHeight / 2;
+		this._width = resourceWidth * DIV_2;
+		this._height = resourceHeight * DIV_2;
 		this._btnDisplay = btnDisplay;
 
 		// if there isn't a filters obejct in MindSVG transforms will not work.
@@ -71,7 +76,7 @@ export class BackButton extends Button {
 		this._btnSprite.texture = texture;
 		this._btnSprite.width = this._width;
 		this._btnSprite.height = this._height;
-		this._btnSprite.anchor.set(0.5, 0.5);
+		this._btnSprite.anchor.set(ANCHOR_MIDDLE, ANCHOR_MIDDLE);
 	}
 
 	_extractStyle (theme, themeId = 'backButton') {
@@ -86,11 +91,10 @@ export class BackButton extends Button {
 
 	/**
 	 * Update the theme. The alpha value may need to change based on the button's state.
-	 * @param {*} event 
+	 * @param {*} event
 	 */
 	_onThemeChanged (event) {
 		super._onThemeChanged(event);
-		let wasHC = this._isHC;
 		this._isHC = this.arena.theme.getStyles(this._themeId).styleToUse === 'tactile';
 		this._btnDisplay = (this._isHC) ? BackButton.HIGH_CONTRAST_BUTTON : BackButton.DEFAULT_BUTTON;
 		this._redrawButton();
@@ -105,7 +109,7 @@ export class BackButton extends Button {
 	}
 
 	/**
-	 * Make the button non-interactive. 
+	 * Make the button non-interactive.
 	 * For HighContrast this swaps out the texture
 	 */
 	disable () {
@@ -120,7 +124,7 @@ export class BackButton extends Button {
 	}
 
 	/**
-	 * Make the button interactive. 
+	 * Make the button interactive.
 	 * For HighContrast this swaps out the texture
 	 */
 	enable () {
@@ -137,11 +141,11 @@ export class BackButton extends Button {
 	 * Show the sheen effect on the button
 	 * @param {Number} delay time to wait before the animation starts
 	 */
-	hover (delay = 0) {
+	hover (delay = ZERO) {
 		this.alpha = BackButton.HOVER_STATE;
 	}
 
-	/** 
+	/**
 	 * Create a graphic to overlay the jiji go button when pressed.
 	 * This uses the sheenMask as its mask to cover the correct area.
 	*/
@@ -150,7 +154,7 @@ export class BackButton extends Button {
 		let downFill = this._style.downFill;
 		let downAlpha = this._style.downAlpha;
 		this._downFilter.beginFill(downFill, downAlpha);
-		this._downFilter.drawRect(0, 0, this._width, this._height);
+		this._downFilter.drawRect(ZERO, ZERO, this._width, this._height);
 		this._downFilter.endFill();
 		this._downFilter.x = -this._width * this._content.anchor.x;
 		this._downFilter.y = -this._height * this._content.anchor.y;
@@ -192,14 +196,14 @@ export class BackButton extends Button {
 		super.pointerUpOutside();
 	}
 
-	positionButton (position, coordinateSpace = undefined, buttonAlignment = {x: 0.5, y: 0.5}) { 
+	positionButton (position, coordinateSpace = undefined, buttonAlignment = { x: ANCHOR_MIDDLE, y: ANCHOR_MIDDLE }) {
 		let globalPosition = position;
 		if (coordinateSpace !== undefined) {
 			globalPosition = coordinateSpace.toGlobal(globalPosition);
 		}
 		let localPosition = this.parent.toLocal(globalPosition);
 		this.x = localPosition.x - (buttonAlignment.x - this.anchor.x) * this.outlineWidth;
-		this.y = localPosition.y - (buttonAlignment.y - this.anchor.y) * this.outlineHeight; 
+		this.y = localPosition.y - (buttonAlignment.y - this.anchor.y) * this.outlineHeight;
 	}
 
 	_getHintTexture () {
@@ -208,7 +212,7 @@ export class BackButton extends Button {
 		let hintAlpha = this._style.hintAlpha;
 
 		// MIND SVG is particular about the formatting of the hex colors
-		let hintColor = hintColorHex.replace('0x', '#'); 
+		let hintColor = hintColorHex.replace('0x', '#');
 
 		let textureId = `${this._btnDisplay}_${hintColor}_${hintPadding}`;
 		let hintTexture = MindTextureManager.getTexture(textureId);
@@ -224,16 +228,16 @@ export class BackButton extends Button {
 			svgButton.getElementById('outline').setAttribute('stroke-width', stroke);
 			svgButton.getElementById('outline').setAttribute('fill', hintColor);
 			svgButton.getElementById('outline').setAttribute('stroke', hintColor);
-			svgButton.getElementById('outline').setAttribute('stroke-opacity', hintAlpha)
+			svgButton.getElementById('outline').setAttribute('stroke-opacity', hintAlpha);
 			svgButton.addSize(hintPadding);
 			svgButton.getTexture().then((texture) => {
 				MindTextureManager.saveTexture(textureId, texture);
 				this._hint.texture = texture;
-				this._hint.anchor.set(0.5, 0.5);
+				this._hint.anchor.set(ANCHOR_MIDDLE, ANCHOR_MIDDLE);
 			});
 		} else {
 			this._hint.texture = hintTexture;
-			this._hint.anchor.set(0.5, 0.5);
+			this._hint.anchor.set(ANCHOR_MIDDLE, ANCHOR_MIDDLE);
 		}
 	}
 
@@ -244,7 +248,6 @@ export class BackButton extends Button {
 	// _calculateOutlineDimensions and _tranformPoints were created to calculate the bounds desipite this.
 	// at a later it would be beneficial to determine a cleaner way to define the hit area of the button
 	_calculateOutlineDimensions () {
-
 		let pathStr = this._getPathFromResource();
 		let pathArr = pathStr.split(' ');
 		let minX = Number.MAX_SAFE_INTEGER;
@@ -258,7 +261,7 @@ export class BackButton extends Button {
 			let val = pathArr[iter];
 			let x = 0;
 			let y = 0;
-			let isValNum = !isNaN(parseInt(val, 10))
+			let isValNum = !isNaN(parseInt(val, 10));
 			if (isValNum) {
 				x = parseInt(val, 10);
 				y = parseInt(pathArr[++iter]);
@@ -267,17 +270,17 @@ export class BackButton extends Button {
 				y = parseInt(pathArr[++iter]);
 			} else if (val === 'Z' || val === 'z') {
 				break;
-			}  else {
+			} else {
 				continue;
 			}
 
 			pts.push(new this.arena.PIXI.Point(x, y));
 		}
 
-		minX = -this._width / 2;
-		maxX = this._width / 2;
-		minY = -this._height / 2;
-		maxY = this._height / 2;
+		minX = -this._width * DIV_2;
+		maxX = this._width * DIV_2;
+		minY = -this._height * DIV_2;
+		maxY = this._height * DIV_2;
 
 		this.minX = minX;
 		this.minY = minY;
@@ -292,8 +295,8 @@ export class BackButton extends Button {
 
 	_getPathFromResource () {
 		// get the path that defines the resource's outline
-		let resourceDoc = this.resources[this._btnDisplay].xmlData;
-		let elem = resourceDoc.getElementById('outline');
+		// let resourceDoc = this.resources[this._btnDisplay].xmlData;
+		// let elem = resourceDoc.getElementById('outline');
 
 		// let pathStr = elem.getAttribute('d');
 		let pathDefafult = 'M 314.05 318.35 L 302.05 318.35 282.05 342.35 302.05 366.35 314.05 366.35 314.05 318.35 Z';
@@ -305,13 +308,13 @@ export class BackButton extends Button {
 
 	/**
 	 *
-	 */	
+	 */
 	_tranformPoints (points) {
-		let outlineTrasnform = (this._isHC) ? {a: 1, b: 0, c: 0, d: 1, e: 0, f: 0} : {a: 1, b: 0, c: 0, d: 1, e: -298.05, f: -342.35};
+		let outlineTrasnform = (this._isHC) ? { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 } : { a: 1, b: 0, c: 0, d: 1, e: -298.05, f: -342.35 };
 
 		let strokeWidth = this._style.strokeWidth;
-		let offsetX = outlineTrasnform.e - (this._width - this.outlineWidth) / 2 + strokeWidth / 2;
-		let offsetY = outlineTrasnform.f - (this._height - this.outlineHeight) / 2 + strokeWidth / 2;
+		let offsetX = outlineTrasnform.e - (this._width - this.outlineWidth) * DIV_2 + strokeWidth * DIV_2;
+		let offsetY = outlineTrasnform.f - (this._height - this.outlineHeight) * DIV_2 + strokeWidth * DIV_2;
 
 		points.forEach(point => {
 			point.x += offsetX;
@@ -347,4 +350,4 @@ export const styles = { // add this to the theme using the key 'backButton'
 		'strokeWidth': 2,
 		'showShee': false
 	}
-}
+};

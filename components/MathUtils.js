@@ -32,6 +32,10 @@ export class MathUtils {
 		return { x: vector.x * factor, y: vector.y * factor };
 	}
 
+	static vector3Scale (vector, factor) {
+		return { x: vector.x * factor, y: vector.y * factor, z: vector.z * factor };
+	}
+
 	static vectorLen (vector) {	// magnitude
 		return Math.sqrt(Math.pow(vector.x, TWO) + Math.pow(vector.y, TWO));
 	}
@@ -55,6 +59,10 @@ export class MathUtils {
 		return { x: a.x + b.x, y: a.y + b.y };
 	}
 
+	static vector3Add (a, b) {
+		return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z };
+	}
+
 	// get the slope between two points
 	static getSlope (p2, p1) {
 		return (p2.y - p1.y) / (p2.x - p1.x);
@@ -69,7 +77,7 @@ export class MathUtils {
 		return newPoint;
 	}
 
-    /**
+	/**
 	 * Calculate the middle point of a number set,
 	 * in which half the numbers are above the median and half are below
 	 * @param {number} n the nums of elements on a set number
@@ -132,7 +140,21 @@ export class MathUtils {
 		return MathUtils.vectorAdd(aInv, bt);
 	}
 
-    /**
+	/**
+	* Calculate the linear interpolation between vector a and b
+	* in the dir a -> b
+	* @param {number} t interpolation factor
+	* @param {point} a when t = 0 mix() returns a
+	* @param {point} b when t = 1 mix() returns b
+	*/
+	static vector3Mix (t, a, b) {
+		// a + (b - a)t = a + bt - at = a - at + bt = a(1 - t) + bt
+		let bt = MathUtils.vector3Scale(b, t);
+		let aInv = MathUtils.vector3Scale(a, ONE - t);
+		return MathUtils.vector3Add(aInv, bt);
+	}
+
+	/**
 	 * Returns a random integer between min (inclusive) and max (inclusive)
 	 * Using Math.round() will give you a non-uniform distribution!
 	 */
@@ -143,7 +165,6 @@ export class MathUtils {
 	/**
 	* Convert decimal number in format hexadecimal
 	*/
-
 	static decToHex (d) {
 		let hex = Number(d).toString(HEX);
 		hex = '000000'.substr(ZERO, SIX - hex.length) + hex;
@@ -153,7 +174,7 @@ export class MathUtils {
 	/**
 	*	Version 2, could be useful to convert number to hex with length  < 6
 	*/
-	static decimalToHex (d, padding) {
+	static decimalToHexStr (d, padding = SIX) {
 		var hex = Number(d).toString(HEX);
 		padding = typeof (padding) === 'undefined' || padding === null ? padding = TWO : padding;
 
@@ -163,6 +184,49 @@ export class MathUtils {
 
 		return hex;
 	}
+
+	/**
+	 * @author Romualdo Villalobos
+	 * Convert uint24_t (8bits per channel) color to vector3 and performs linear interpolation between colorA and colorB,
+	 * then concatenate components and returns final vector encoded on a uint24_t number
+	 * @param {number} t interpolation factor
+	 * @param {number} colorA uint24_t number representing a color
+	 * @param {number} colorB uint24_t number representing a color
+	 * @returns {number} uint24_t number representing the mix
+	 */
+	static mixColor (t, colorA, colorB) {
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
+
+		const colorAvec = MathUtils.vector3((colorA & RED_MASK) >> RED_SHIFT, (colorA & GREEN_MASK) >> GREEN_SHIFT, (colorA & BLUE_MASK) >> BLUE_SHIFT);
+		const colorBvec = MathUtils.vector3((colorB & RED_MASK) >> RED_SHIFT, (colorB & GREEN_MASK) >> GREEN_SHIFT, (colorB & BLUE_MASK) >> BLUE_SHIFT);
+
+		const mixedColor = MathUtils.vector3Mix(t, colorAvec, colorBvec);
+
+		let rInt8 = Number.parseInt(mixedColor.x);
+		let gInt8 = Number.parseInt(mixedColor.y);
+		let bInt8 = Number.parseInt(mixedColor.z);
+
+		return (rInt8 << RED_SHIFT) | (gInt8 << GREEN_SHIFT) | bInt8;
+	}
+
+	static vector2 (x, y) {
+		return {
+			x: Number(x),
+			y: Number(y)
+		}
+	}
+
+	static vector3 (x, y, z) {
+		return {
+			x: Number(x),
+			y: Number(y),
+			z: Number(z)
+		}
+	}
+
+
 
 	static getDigitCount (number) {
 		return Math.max(Math.floor(Math.log10(Math.abs(number))), ZERO) + ONE;
@@ -199,11 +263,54 @@ export class MathUtils {
 		var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
 		if (!match) { return ZERO; }
 		return Math.max(
-				ZERO,
-				// Number of digits right of decimal point.
-				(match[ONE] ? match[ONE].length : ZERO) -
+			ZERO,
+			// Number of digits right of decimal point.
+			(match[ONE] ? match[ONE].length : ZERO) -
 				// Adjust for scientific notation.
 				(match[TWO] ? +match[TWO] : ZERO));
+	}
+
+	/**
+	 * get the min value in an array
+	 * @param {*} arr
+	 */
+	static arrayMin (arr) {
+		var len = arr.length; var min = Infinity;
+		while (len--) {
+			if (Number(arr[len]) < min) {
+				min = Number(arr[len]);
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * get the max value in an array
+	 * @param {*} arr
+	 */
+	static arrayMax (arr) {
+		var len = arr.length; var max = -Infinity;
+		while (len--) {
+			if (Number(arr[len]) > max) {
+				max = Number(arr[len]);
+			}
+		}
+		return max;
+	};
+
+	/**
+	 * Get all divisors of an integer
+	 * @param {*} N
+	 * @returns {array}
+	 */
+	static getDivisors (N) {
+		let divisors = [];
+		for (let i = 1; i < N; i++) {
+			if (N % i === ZERO) {
+				divisors.push(i);
+			}
+		}
+		return divisors;
 	}
 
 	/**
@@ -256,7 +363,7 @@ export class MathUtils {
 	}
 
 	/**
-	 * Chekc if a ginven number is int or float
+	 * Check if a ginven number is int or float
 	 * @param {number} n number for checking
 	 * @returns {boolean} flag indicating if respective number is float or number
 	 */
@@ -265,10 +372,11 @@ export class MathUtils {
 		const ONE = 1;
 		return n % ONE === ZERO;
 	}
-	
+
 	/**
 	 * verify if a number is prime
 	 * @param {*} value
+	 * @returns {boolean} flag indicating if respective number is float or number
 	 */
 	static isPrime (value) {
 		for (var i = 2; i < value; i++) {
@@ -279,7 +387,6 @@ export class MathUtils {
 		return value > ONE;
 	}
 
-
 	/**
 	 * Find prime factors of a number
 	 * @param {number} a number for searching its prime factors
@@ -288,10 +395,10 @@ export class MathUtils {
 	static primeFactors (a) {
 		let primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]; // eslint-disable-line no-magic-numbers
 
-		var primeFactors = [];
+		let primeFactors = [];
 
 		// Trial division algorithm
-		for (var i = ZERO, p = primeNumbers[i]; i < primeNumbers.length && p * p <= a; i++, p = primeNumbers[i]) {
+		for (let i = ZERO, p = primeNumbers[i]; i < primeNumbers.length && p * p <= a; i++, p = primeNumbers[i]) {
 			while (a % p === ZERO) {
 				primeFactors.push(p);
 				a /= p;
@@ -304,7 +411,37 @@ export class MathUtils {
 
 		return primeFactors;
 	}
-	
+
+	/**
+	 * return array of prime factors with out repeat
+	 * @param {*} N
+	 * @returns {Array} // the key in the array is the base and the values is the exponent
+	 */
+	static primeFactorsAlt (N) {
+		let p = 2;
+		let primeFactors = [];
+		const ONE_ELEMENT = 1;
+		while (N >= p * p) {
+			if (N % p === ZERO) {
+				if (primeFactors[p]) {
+					primeFactors[p] += ONE_ELEMENT;
+				} else {
+					primeFactors[p] = ONE_ELEMENT;
+				}
+				N /= p;
+			} else {
+				p++;
+			}
+		}
+
+		if (primeFactors[N]) {
+			primeFactors[N] += ONE_ELEMENT;
+		} else {
+			primeFactors[N] = ONE_ELEMENT;
+		}
+
+		return primeFactors;
+	}
 
 	/**
 	 * Analyze fraction and check for periodic decimals
