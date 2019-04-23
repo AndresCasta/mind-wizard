@@ -84,7 +84,8 @@ gulp.task('configureProject', async () => {
 		let jsonFile = JSON.parse(rawdata);
 		jsonFile.puzzle.puzzles = puzzleJs.default.puzzles;
 		let outJsonFile = JSON.stringify(jsonFile, null, 2);
-		outJsonFile = outJsonFile.replace(new RegExp(templateName, 'gi'), cmdName)
+		let regexp = new RegExp(templateName, 'gi');
+		outJsonFile = outJsonFile.replace(regexp, cmdName)
 		const jsonDest = `${dst}${cmdName}.json`;
 		fs.writeFileSync(jsonDest, outJsonFile, (inError) => {
 			if (inError) {
@@ -97,6 +98,60 @@ gulp.task('configureProject', async () => {
 			}
 		});
 
+		// Updates package.json to support travis-ci
+		fs.writeFileSync('./package-old.json', JSON.stringify(packageJson, null, 2), (inError) => {
+			if (inError) {
+				console.log(inError.message);
+			} else {
+				_esLintFix(jsonDest);
+				// if fixed, write the file to dest
+				// .pipe(gulpIf(utils.isFixed, gulp.dest(schemaDest + '/..')));
+				console.log('Check ' + jsonDest + ' for new schema created.');
+			}
+		});
+		let updatedPackageJson = Object.assign({}, packageJson);
+		let mindObject = {
+			name: cmdName,
+			overrides: {},
+			webAppOptions: {
+				transition: {
+					intro: 'NONE',
+					outro: 'NONE',
+					jijiPos: 'CUSTOM'
+				}
+			},
+			testHarnessOptions: {
+				locale: jsonFile.locale,
+				font: jsonFile.font,
+				themes: jsonFile.themes,
+				puzzle: jsonFile.puzzle
+			}
+		};
+
+		mindObject['bundle-assets'] = {
+			output: `${cmdName}.tar`,
+			assets: [
+				`assets/${cmdName}/**/*`,
+				'assets/shapes/*',
+				'assets/shapes/fruits/*',
+				'assets/background/*'
+			]
+		}
+
+		updatedPackageJson.mind = mindObject;
+
+		let outPackageJson = JSON.stringify(updatedPackageJson, null, 2).replace(regexp, cmdName);
+		console.log(outPackageJson);
+		fs.writeFileSync('./package.json', outPackageJson, (inError) => {
+			if (inError) {
+				console.log(inError.message);
+			} else {
+				_esLintFix(jsonDest);
+				// if fixed, write the file to dest
+				// .pipe(gulpIf(utils.isFixed, gulp.dest(schemaDest + '/..')));
+				console.log('Check ' + jsonDest + ' for new schema created.');
+			}
+		});
 	}
 
 	// Configure test levels
@@ -324,8 +379,8 @@ gulp.task('bundle-standalone', () => {
 });
 
  /**
-  * Displays list of available tasks and how to use some.
-  */
+	* Displays list of available tasks and how to use some.
+	*/
 gulp.task('help', () => {
 	// this command should activate the functions help function.
 	let cmds = {};
@@ -457,20 +512,20 @@ gulp.task('watch', function () {
 });
 
  /**
-  * Uses nectar to create asset bundles as tar files:
-  * https://www.npmjs.com/package/nectar.
-  *
-  * Uses the following defined in package.json:
-  * "mind": {
-  * 	"bundle-assets": {
-  *    		"output": "assets/ExampleGame.tar",
-  *   		"assets": [
-  *      		"assets/ExampleGame/*"
-  *			]
-  *		}
-  *	}
-  *
-  */
+	* Uses nectar to create asset bundles as tar files:
+	* https://www.npmjs.com/package/nectar.
+	*
+	* Uses the following defined in package.json:
+	* "mind": {
+	* 	"bundle-assets": {
+	*    		"output": "assets/ExampleGame.tar",
+	*   		"assets": [
+	*      		"assets/ExampleGame/*"
+	*			]
+	*		}
+	*	}
+	*
+	*/
 gulp.task('bundle-assets', () => {
 	_newTaskHeader('Bundling assets...');
 	console.log('');
@@ -484,9 +539,9 @@ gulp.task('bundle-assets', () => {
 	let assetPaths = packageJson.mind['bundle-assets'].assets;
 	let bundleOutput = packageJson.mind['bundle-assets'].output;
 
-    // console.log('assetPaths', assetPaths);
-    // console.log('bundleOutput', bundleOutput);
-    // console.log('');
+		// console.log('assetPaths', assetPaths);
+		// console.log('bundleOutput', bundleOutput);
+		// console.log('');
 
 	nectar(assetPaths, bundleOutput);
 });
