@@ -32,8 +32,19 @@ gulp configureProject ---name newProjectName ---xmlLevelSrc ./DemoLevel.xml ---t
 | ---template      | El nombre de la arena ubicada en PixiArenas/ que se utilizara como plantilla      |  Opcional (Por defecto se usará ExampleGame)  |
 | ---xmlLevelSrc | La ubicación del nivel en XML si se especifica automaticamente se generará el schema y se agregara en todos los archivos necesarios      |    Opcional |
 
-### Note 1
-Ten en cuenta que debes modificar el schema generado automaticamente por ejemplo para quitar campos requeridos o cambiar los tipos de datos.
+### Dependencias
+Esta tarea necesita que instales los siguientes paquetes.:
+
+```bash
+npm i --save-dev gulp-rename // to allow folder rename.
+```
+
+```bash
+npm i --save-dev gulp-replace // to allow file strings replace.
+```
+
+### Nota 1
+Ten en cuenta que debes modificar el schema generado automaticamente. Por ejemplo: para quitar campos requeridos o cambiar los tipos de datos.
 
 ### Nota 2
 
