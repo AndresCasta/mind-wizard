@@ -68,8 +68,24 @@ Para importar todos los svg facilmente ejecutamos el siguiente comando:
 gulp assetImporter ---src ./assets/ExampleGame
 ```
 
+Se generarán dos archivos que contendran toda la información de los assets encontrados.
+
 ![](https://imgur.com/zhWyf5h.gif)
 
+Estos archivos se podran importar luego en el tema tan facil como:
+```javascript
+import { default as ExampleGameAssets } from '../../assets/ExampleGame/ExampleGame_assets';
+
+export default {
+  'exampleGameAssets': ExampleGameAssets,
+  // ... the other assets an styles
+}
+```
+
+Por ultimo podras utilizar los assets definidios en **ExampleGame_assets.js** como estas acostumbrado.
+```javascript
+sprite.texture = this.resources['ufo_feedback_12fps_assets_frame004'].texture;
+```
 
 ## gulp cropSvg
 Esta tarea esta pensada para remplazar cropSvg.js hace exactamente lo mismo, ademas no necesita que el usuario agregue a la variable de entorno PATH del sistema la ubicación de inkscape.
