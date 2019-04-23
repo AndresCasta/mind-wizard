@@ -53,13 +53,22 @@ Para asegurar de que el servidor se ejecutara utiliza el siguiente comando.
 ```bash
 gulp bundle ---gameName ArenaName ---serve true ---ignoreLint true
 ```
+## gulp assetImporter
+Importa recursivamente los archivos **.svg** que se encuentren desde la carpeta **---src**, la tarea genera un archivo que referencia todas las imagenes, este archivo luego se podrá importar fácilmente en el tema del juego (y en el package.json).
+
+Adicionalmente la tarea se quedara escuchando la ruta especificada de forma recursiva para actualizar automaticamente el archivo generado, permitiendonos asi agregar imagenes al proyecto simplemente agregandolas a la carpeta especificada.
+
+### Ejemplo
+Supongamos la siguiente estructura de archivos en: **assets/ExampleGame**
+
+![](https://imgur.com/UtkQRJw.gif)
 
 ## gulp cropSvg
 Esta tarea esta pensada para remplazar cropSvg.js hace exactamente lo mismo, ademas no necesita que el usuario agregue a la variable de entorno PATH del sistema la ubicación de inkscape.
 
 Cabe decir que esta utilidad no busca recursivamente archivos .svg en carpetas hijas.
 
-### Example
+### Ejemplo
 Recorta todas los svg en la carpeta cropMe
 
 ```bash
