@@ -12,6 +12,13 @@ Con esta tarea podras crear una nueva arena a partir de una arena plantilla, (po
 6. Agregar todas las referencias del puzzle en el archivo test levels, package.json y ArenaName.json.
 7. Soportar travis-ci por defecto.
 
+Para ejecutar el proyecto generado debes utilizar la siguiente dirección:
+
+
+```
+// Nota el /testgen/ en lugar del /test/
+http://localhost:8081/testgen/
+```
 
 ### Ejemplo
 
@@ -26,7 +33,6 @@ gulp configureProject ---name newProjectName ---xmlLevelSrc ./DemoLevel.xml ---t
 | ---xmlLevelSrc | La ubicación del nivel en XML si se especifica automaticamente se generará el schema y se agregara en todos los archivos necesarios      |    Opcional |
 
 ### Nota 2
-En la nueva version mind agregó el flag **---ignoreLint** a la tarea bundle, si esta en falso (valor por defecto) el servidor no iniciara y en su lugar es-lint corregira automaticamente todos los errores que pueda.
 
 Para asegurar de que el servidor se ejecutara utiliza el siguiente comando.
 
