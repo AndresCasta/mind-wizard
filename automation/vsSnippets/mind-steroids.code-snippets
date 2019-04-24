@@ -92,6 +92,39 @@
 	},
 	// #endregion COMMENTS
 
+	// #region functions
+	"functionExpression": {
+		"scope": "javascript", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "fn",
+		"body": [
+			"const ${1:fn} = function ${1:fn} (${2:args = {\\}}) {",
+				"\t// Add args validation here.",
+				"\t$0",
+			"};"
+		]
+	},
+	"arrowFunction": {
+		"scope": "javascript", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "fn",
+		"body": [
+			"const ${1:fn} = (${2:args = {\\}}) => {",
+				"\t// Add args validation here.",
+				"\t$0",
+			"};"
+		]
+	},
+	"method": {
+		"scope": "javascript", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "fn",
+		"body": [
+			"${1:_methodName} (${2:args = {\\}}) {",
+				"\t// Add args validation here.",
+				"\t$0",
+			"};"
+		]
+	},
+	// #endregion functions
+
 	// #############################################
 	// ## CUSTOMS
 	// #############################################
