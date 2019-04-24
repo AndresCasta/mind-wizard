@@ -51,11 +51,12 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 	 * https://github.com/pixijs/pixi.js/blob/dda5fde27741576db7b8ebe6196e2a0552bcdb94/packages/sprite-animated/src/AnimatedSprite.js#L161
      * @returns {void}
      */
-	play (time = DEFAULT_TIME, label) {
+	play (time = DEFAULT_TIME, label, delay = ZERO) {
 		const deltaTime = time / this.totalFrames;
 
 		this.arena.tween.to(this, time, {
 			_currentTime: super.totalFrames * this.loopTimes,
+			delay: delay,
 			onUpdate: this.update.bind(this, deltaTime)
 		}, label);
 	}
@@ -87,6 +88,16 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 				// console.log('UPDATED TEXTURE');
 			}
 		}
+	}
+
+	reset (label, delay) {
+		this.arena.tween.to(this, Number.EPSILON, {
+			_currentTime: 0,
+			delay: delay,
+			onComplete: () => {
+				this.updateTexture();
+			}
+		}, label);
 	}
 
 	/**
