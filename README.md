@@ -22,7 +22,8 @@ Posiciona textos dentro de un contenedor para generar una fracción.
 
 ![](https://imgur.com/4Gyqnzn.gif)
 
-
+## [AnimatedSprite](https://github.com/AndresCasta/mind-wizard/tree/master/components/AnimatedSprite)
+Permite reproducir secuencias de imagenes en una animación, esta versión modificada soporta playback en la animación de feedback.
 
 
 # Utilidades
