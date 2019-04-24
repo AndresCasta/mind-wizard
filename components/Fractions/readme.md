@@ -34,3 +34,6 @@ textContent.numerator = numerator;
 textContent.denominator = denominator;
 this.addChild(textContent);
 ```
+
+## Ejemplo de la vida real
+[MultStacks](https://test.stmath.com/test.html#/game-test/MultStacks): El slider.
