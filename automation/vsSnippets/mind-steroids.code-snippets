@@ -1,0 +1,64 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"tween_basic": {
+		"scope": "javascript",
+		"prefix": "tweenBasic",
+		"body": [
+			"this.arena.tween.to($1, ${2:Number.EPSILON}, {",
+			"\t$3",
+			"});"
+		]
+	},
+
+	"For each loop": {
+		"scope": "javascript",
+		"prefix": "foreach",
+		"body": [
+			"${1:array}.forEach((${2:elem}) => {",
+			"\t$0",
+			"});"
+		]
+	},
+
+	"Offset to Position": {
+		"scope": "javascript",
+		"prefix": "offset",
+		"body": [
+			"this._offsetToPos(xOffset$1Point, yOffset$2Point);$0"
+		]
+	},
+
+	"For Each Method": {
+		"scope": "javascript",
+		"prefix": "forEachArr",
+		"body": [
+			"$1.forEach(($2) => {",
+			"\t$3",
+			"});$0"
+		]
+	},
+
+	"Rectangle": {
+		"scope": "javascript",
+		"prefix": "rect",
+		"body": [
+			"this._createRectangle($1, $2, $3);$0"
+		]
+	}
+}
