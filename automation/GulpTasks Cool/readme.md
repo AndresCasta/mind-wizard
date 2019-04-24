@@ -1,6 +1,8 @@
 # GulpTasks Cool
 Esta es una version mejorada de las tareas definidas por defecto por mind. Entre las nuevas tareas podras encontrar las siguientes:
 
+*NOTA: Se recomienda tener el terminal en el directorio raiz del proyecto antes de ejecutar estos comandos.*
+
 ## gulp configureProject
 Con esta tarea podras crear una nueva arena a partir de una arena plantilla, (por defecto se utiliza ExampleGame como plantilla). Esta tarea simplifica significativamente el proceso de iniciar un nuevo proyecto ya que hara por ti lo siguiente:
 
@@ -53,13 +55,44 @@ Para asegurar de que el servidor se ejecutara utiliza el siguiente comando.
 ```bash
 gulp bundle ---gameName ArenaName ---serve true ---ignoreLint true
 ```
+## gulp assetImporter
+Importa recursivamente los archivos **.svg** que se encuentren desde la carpeta **---src**, la tarea genera un archivo que referencia todas las imagenes, este archivo luego se podrá importar fácilmente en el tema del juego (y en el package.json).
+
+Adicionalmente la tarea se quedara escuchando la ruta especificada de forma recursiva para actualizar automaticamente el archivo generado, permitiendonos asi agregar imagenes al proyecto simplemente agregandolas a la carpeta especificada.
+
+### Ejemplo
+Supongamos la siguiente estructura de archivos en: **assets/ExampleGame**
+
+Para importar todos los svg facilmente ejecutamos el siguiente comando:
+```bash
+gulp assetImporter ---src ./assets/ExampleGame
+```
+
+Se generarán dos archivos que contendran toda la información de los assets encontrados.
+
+![](https://imgur.com/zhWyf5h.gif)
+
+Estos archivos se podran importar luego en el tema tan facil como:
+```javascript
+import { default as ExampleGameAssets } from '../../assets/ExampleGame/ExampleGame_assets';
+
+export default {
+  'exampleGameAssets': ExampleGameAssets,
+  // ... the other assets an styles
+}
+```
+
+Por ultimo podras utilizar los assets definidios en **ExampleGame_assets.js** como estas acostumbrado.
+```javascript
+sprite.texture = this.resources['ufo_feedback_12fps_assets_frame004'].texture;
+```
 
 ## gulp cropSvg
 Esta tarea esta pensada para remplazar cropSvg.js hace exactamente lo mismo, ademas no necesita que el usuario agregue a la variable de entorno PATH del sistema la ubicación de inkscape.
 
 Cabe decir que esta utilidad no busca recursivamente archivos .svg en carpetas hijas.
 
-### Example
+### Ejemplo
 Recorta todas los svg en la carpeta cropMe
 
 ```bash
