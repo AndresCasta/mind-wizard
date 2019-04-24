@@ -1,3 +1,6 @@
+# ADVERTENCIA
+Este script esta deprecated en su lugar se recomienda utilizar [Cool GulpTasks](https://github.com/AndresCasta/mind-wizard/tree/master/automation/Cool%20GulpTasks)
+
 # Crop Svg
 **cropSvg.js** es un pequello script de utilidad para ajustar el tamaño de la pagina al dibujo que contiene el archivo svg.
 

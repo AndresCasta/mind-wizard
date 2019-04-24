@@ -1,4 +1,4 @@
-# GulpTasks Cool
+# Cool GulpTasks
 Esta es una version mejorada de las tareas definidas por defecto por mind. Entre las nuevas tareas podras encontrar las siguientes:
 
 *NOTA: Se recomienda tener el terminal en el directorio raiz del proyecto antes de ejecutar estos comandos.*
