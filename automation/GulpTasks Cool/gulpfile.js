@@ -25,8 +25,8 @@ const nectar = require('nectar');
 const packageJson = require('./package.json');
 const replace = require('gulp-replace'); // Simple string replace
 const rename = require("gulp-rename"); // plugin to rename files easily.
-const BJSON = require('buffer-json');
-
+var watch = require('gulp-watch'); // File watcher that uses super-fast chokidar and emits vinyl objects.
+const path = require('path'); // from node
 
 const srcWatch = 'PixiArenas/**/*.js';
 const mindCmdPrefix = Utils.MIND_COMMAND_PREFIX; // must have atleast one '-' at the beginning.
@@ -265,6 +265,117 @@ gulp.task('schema-wizard3d', () => {
 	});
 });
 
+let themeObj = {};
+// Image importer
+gulp.task('assetImporter', () => {
+	const cmd = _getMindCommands();
+	const src = cmd[Utils.MIND_COMMAND_PREFIX + 'src'];
+
+	const isDirectory = source => fs.lstatSync(source).isDirectory()
+	if (src) {
+		// In Node.js, __dirname is always the directory in which the currently executing script resides
+		let fullSrc = path.resolve(__dirname, src);
+		if (isDirectory(fullSrc)) {
+			const filter = '.svg';
+
+			themeObj = {};
+			recursiveSearch(fullSrc, filter, function (filename) {
+				let basename = path.basename(filename);
+				let posixFilename = filename.replace(/\\/g, '/');
+				let startIndex = posixFilename.indexOf('/assets');
+				let fileUri = posixFilename.substring(startIndex);
+				console.log(fileUri);
+				themeObj[basename] = {
+					name: basename,
+					type: 'image',
+					url: fileUri,
+					metadata: {
+						mipmap: true,
+						resolution: 2
+					}
+				}
+			});
+			let themeObjJson = JSON.stringify(themeObj, null, 4);
+			let folderName = path.basename(fullSrc); // gets the folder name
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.json`), themeObjJson);
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.js`), `export default ${themeObjJson.replace(/"/g, '\'')}`);
+		} else {
+			console.error('Sorry, this command only works with directories.');
+		}
+	} else {
+		console.error('Please provide a source.');
+	}
+
+	watch(src, function (event) {
+		console.log('change event fired ' + event.event);
+		// console.log(event);
+		// when a file is renamed it's fired the add and the unlink event.
+		if (event.event === 'add') { // renamed or new file
+			let filename = event.history[0];
+			let basename = path.basename(filename);
+			console.log(basename);
+			let posixFilename = filename.replace(/\\/g, '/');
+			let startIndex = posixFilename.indexOf('/assets');
+			let fileUri = posixFilename.substring(startIndex);
+
+			themeObj[basename] = {
+				name: basename,
+				type: 'image',
+				url: fileUri,
+				metadata: {
+					mipmap: true,
+					resolution: 2
+				}
+			}
+
+			let fullSrc = path.resolve(__dirname, src);
+			let themeObjJson = JSON.stringify(themeObj, null, 4);
+			let folderName = path.basename(fullSrc); // gets the folder name
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.json`), themeObjJson);
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.js`), `export default ${themeObjJson.replace(/"/g, '\'')}`);
+		} else if (event.event === 'unlink') { // renamed or removed
+			let filename = event.history[0];
+			let basename = path.basename(filename);
+			console.log(basename);
+			delete themeObj[basename]; // if not defined, then this does nothing.
+
+			let fullSrc = path.resolve(__dirname, src);
+			let themeObjJson = JSON.stringify(themeObj, null, 4);
+			let folderName = path.basename(fullSrc); // gets the folder name
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.json`), themeObjJson);
+			fs.writeFileSync(path.join(fullSrc, `${folderName}_assets.js`), `export default ${themeObjJson.replace(/"/g, '\'')}`);
+		} else if (event.event === 'change') { // file content change
+			// this dont require action from gulp
+		}
+	});
+});
+
+function recursiveSearch (startPath, filter, callback) {
+	if (!fs.existsSync(startPath)) {
+		console.log('no dir ', startPath);
+		return;
+	}
+
+	var files = fs.readdirSync(startPath);
+	for (var i = 0; i < files.length; i++) {
+		var filename = path.join(startPath, files[i]);
+		var stat = fs.lstatSync(filename);
+		if (stat.isDirectory()) {
+			let folderName = path.basename(filename);
+			const folderCommands = folderName.split('_');
+			let shouldIgnore = false;
+			folderCommands.forEach(command => {
+				if (command === 'watchignore' || command === 'ignore') {
+					shouldIgnore = true;
+				}
+			});
+			// Execute only if shouldn't ignore this filename
+			if (!shouldIgnore) recursiveSearch(filename, filter, callback); // recurse
+		} else if (filename.indexOf(filter) >= 0) {
+			callback(filename);
+		};
+	};
+}
 
 gulp.task('latest', () => {
 	_newTaskHeader('Installing libs...');
