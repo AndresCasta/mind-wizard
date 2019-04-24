@@ -16,17 +16,87 @@
 	// 	"description": "Log output to console"
 	// }
 
-	"tween_basic": {
+	// "tween_basic": {
+	// 	"scope": "javascript",
+	// 	"prefix": "import"
+	// 	"body": [
+	// 		"this.arena.tween.to($1, ${2:Number.EPSILON}, {",
+	// 		"\t$3",
+	// 		"});"
+	// 	]
+	// },
+
+	// #############################################
+	// ## TWEEN SYSTEM
+	// #############################################
+	// #region TWEEN
+	"tweenTo": {
 		"scope": "javascript",
-		"prefix": "tweenBasic",
+		"prefix": "tween",
 		"body": [
-			"this.arena.tween.to($1, ${2:Number.EPSILON}, {",
-			"\t$3",
-			"});"
+			"this.arena.tween.to(${1:obj}, ${2:Number.EPSILON}, { ${3:alpha}: ${4:1} });$0"
+		]
+	},
+	"tweenToWithLabel": {
+		"scope": "javascript",
+		"prefix": "tween",
+		"body": [
+			"this.arena.tween.to(${1:obj}, ${2:Number.EPSILON}, { ${3:alpha}: ${4:1} }, ${5:label});$0"
+		]
+	},
+	"addUniqueLabel": {
+		"scope": "javascript",
+		"prefix": "tween",
+		"body": [
+			"const ${1:nameLabel} = this.arena.tween.addUniqueLabel('$1');$0"
+		]
+	},
+	"callback": {
+		"scope": "javascript",
+		"prefix": "tween",
+		"body": [
+			"this.arena.tween.to({}, Number.EPSILON, {",
+			"\tonComplete: () => {",
+			"\t\t$1",
+			"\t},",
+			"\tonReverseComplete: () => {",
+			"\t\t$2",
+			"\t}",
+			"});$0"
+		]
+	},
+	// #endregion TWEEN
+
+	// #############################################
+	// ## CUSTOMS
+	// #############################################
+	// #region COMMENTS
+	"puzzleName": {
+		"scope": "javascript,jsonc", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "comment",
+		"body": [
+			"/**",
+			"* Puzzle ${1:1}",
+			"*/"
 		]
 	},
 
-	"For each loop": {
+	"region": {
+		"scope": "javascript,jsonc", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "comment",
+		"body": [
+			"// #region $1",
+			"$0",
+			"// #endregion $1"
+		]
+	},
+	// #endregion COMMENTS
+
+	// #############################################
+	// ## CUSTOMS
+	// #############################################
+	// #region CUSTOMS
+	"For Each Method": {
 		"scope": "javascript",
 		"prefix": "foreach",
 		"body": [
@@ -34,31 +104,6 @@
 			"\t$0",
 			"});"
 		]
-	},
-
-	"Offset to Position": {
-		"scope": "javascript",
-		"prefix": "offset",
-		"body": [
-			"this._offsetToPos(xOffset$1Point, yOffset$2Point);$0"
-		]
-	},
-
-	"For Each Method": {
-		"scope": "javascript",
-		"prefix": "forEachArr",
-		"body": [
-			"$1.forEach(($2) => {",
-			"\t$3",
-			"});$0"
-		]
-	},
-
-	"Rectangle": {
-		"scope": "javascript",
-		"prefix": "rect",
-		"body": [
-			"this._createRectangle($1, $2, $3);$0"
-		]
 	}
+	// #endregion CUSTOMS
 }
