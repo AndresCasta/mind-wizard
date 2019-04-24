@@ -4,6 +4,28 @@ Utilidades, componentes, clases, snnipets y macros para acelerar el tiempo neces
 *NOTA: Se pide disculpas por los probables errores de ortografia que encuentres en este documento.*
 
 # Componentes
+## [BackButton](https://github.com/AndresCasta/mind-wizard/tree/master/components/BackButton)
+![](https://imgur.com/OYJtlNB.gif)
+
+## [Hourglass](https://github.com/AndresCasta/mind-wizard/tree/master/components/Hourglass)
+Reloj de arena animado, recibe el tiempo y un callback que se invocara cuando termine. Y permite cambiar el tamaño facilmente.
+
+![](https://imgur.com/bGNHvTA.gif)
+
+## [FractionText](https://github.com/AndresCasta/mind-wizard/tree/master/components/Fractions)
+Posiciona textos dentro de un contenedor para generar una fracción.
+
+![](https://imgur.com/XMLDkEK.gif)
+
+## [SimpleFractionText](https://github.com/AndresCasta/mind-wizard/tree/master/components/Fractions)
+Posiciona textos dentro de un contenedor para generar una fracción.
+
+![](https://imgur.com/4Gyqnzn.gif)
+
+
+
+
+# Utilidades
 ## [BashScripts](https://github.com/AndresCasta/mind-wizard/tree/master/automation/BashScripts)
 Scripts del bash para:
 1. Hacer push a develop con un solo comando.
