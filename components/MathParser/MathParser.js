@@ -43,7 +43,7 @@ const ASSOC = {
 // };
 
 /**
- * Another precedence rule, herer M D and A S uses the same precedence valu,
+ * Another precedence rule, here M D and A S uses the same precedence value,
  * this precedence is used for most standard calculators
  */
 const PREC = {
@@ -751,11 +751,11 @@ export class Token {
 		this.type = type;				// type of current token
 		this.value = value;				// value of current token
 		this.uid = staticTokenUidGen;	// token unique identifier
-		this.insideGroups = [];			// this token it is grouped by specified uid tokens
+		this.insideGroups = [];			// this token it is grouped by specified tokens objects
 		this.isImplicit = false;		// this token was added automatically by the tokenizer (lexical analize engine))
 		this.isSingleExponent = false;	// is this token a literal exponent? 2^4 will set isSingleExponent = true on token 4, but not on (2+2) at 2 ^ (2 + 2)
 		this.isRedundant = false;		// a redundant token is a token that is 'wasting' space, for example at (6), the left and right parenthesis are redundant, so those tokens will be marked as redundant
-		this.operateOrder = -1; 		// numbar indincating the order in which should be evluated the current expression (should be positive)
+		this.operateOrder = -1; 		// number indicating the order in which should be evluated the current expression (should be positive)
 	}
 
 	/**
@@ -789,7 +789,7 @@ export class Token {
 
 	/**
 	 * Check if current token is inside an specified group
-	 * @param {Token} groupToken token uid of some group
+	 * @param {Token} groupToken left parenthesis token of some group
 	 * @returns {boolean} flag indicating if current token is inside a specified group uid
 	 */
 	isInsideGroup (groupToken) {

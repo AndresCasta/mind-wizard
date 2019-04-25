@@ -455,6 +455,28 @@ export function drawGradientCircleTexture (radius, gradientProperties, lineWidth
 	return texture;
 }
 
+export function createTillingSprite (resourceId, width, height, returnTexture = false) {
+	let cartStartTexture = this.resources[resourceId].texture;
+	let _PIXI = this.arena.PIXI;
+	let tilingSprite = new _PIXI.extras.TilingSprite(
+		cartStartTexture,
+		width,
+		height
+	);
+
+	const RESOLUTION_SCALE = 2;
+	let renderTexture = new _PIXI.RenderTexture.create(width, height, undefined, RESOLUTION_SCALE);
+	this.arena.app.renderer.render(tilingSprite, renderTexture);
+
+	if (returnTexture) {
+		return renderTexture;
+	} else {
+		let mindOptions = { Rng: this.arena.rng };
+		let sprite = new MindPixiSprite(renderTexture, mindOptions);
+		return sprite;
+	}
+}
+
 /**
  * Draw minus block
  * @param {*} width

@@ -22,7 +22,13 @@ Posiciona textos dentro de un contenedor para generar una fracción.
 
 ![](https://imgur.com/4Gyqnzn.gif)
 
+## [AnimatedSprite](https://github.com/AndresCasta/mind-wizard/tree/master/components/AnimatedSprite)
+Permite reproducir secuencias de imagenes en una animación, esta versión modificada soporta playback en la animación de feedback.
 
+## [MathParser](https://github.com/AndresCasta/mind-wizard/tree/master/components/MathParser)
+![](https://imgur.com/jobly9X.gif)
+
+Evaluador de expresiónes matematicas minimalista, te ayudará a renderizar operaciones matematicas en multiples pasos, ademas te permitira conocer y configurar la precedencia fácilmente.
 
 
 # Utilidades
@@ -40,6 +46,8 @@ Version mejorada de las tareas definidas por mind. Encontraras tareas para:
 
 ## [vsSnippets](https://github.com/AndresCasta/mind-wizard/tree/master/automation/vsSnippets)
 Snippets donde esta la recopilación de soluciones a problemas comunes.
+
+## [vsSnippets](https://github.com/AndresCasta/mind-wizard/tree/master/automation/vsSnippets)
 
 # Algunas soluciones a problemas comunes.
 
