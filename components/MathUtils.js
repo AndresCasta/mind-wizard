@@ -218,7 +218,7 @@ export class MathUtils {
 	 * @param {number} brightness number representing the brightness factor
 	 * @returns {number} uint24_t number representing the mix
 	 */
-	static changeColorIntensity (color, brightness) {
+	static scaleColor (color, brightness) {
 		// define masks and shift
 		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
 		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
