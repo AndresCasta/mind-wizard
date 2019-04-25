@@ -36,6 +36,17 @@ sprite.texture = cartMiddleTexture;
 
 
 ## drawMinusBlock()
+![](https://imgur.com/y5BB8mf.gif)
+
+*NOTA: En la imagen anterior se estan dibujando 4 minus blocks.*
+
+```javascript
+let minusBlock = drawMinusBlock(width, height);
+```
+
+Se utiliza en:
+1. [TenFrameFacts](https://test.stmath.com/test.html#/game-test/TenFrameFacts)
+2. [LinearTransform](https://test.stmath.com/test.html#/game-test/LinearTransform)
 
 ## createPlatform()
 ![](https://imgur.com/crHSZIF.gif)
