@@ -705,6 +705,50 @@ export function renderDotsOnBezierPath (coordinateSpace, quantity, bezierSetting
 	}
 }
 
+export function createPlatform (width, height, theme) {
+	let _platformStyle = extractStyleStatic(theme, 'platform');
+
+	let boxGradientProperties = {
+		type: 'linear',
+		w: width, //     [Linear/Radial: ending radius of gradient]
+		h: height, //     [Linear/Radial: ending radius of gradient]
+		x0: width / NUMBERS.TWO,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+		y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+		x1: width / NUMBERS.TWO,
+		y1: height,
+		colorStops: _platformStyle.colors
+	};
+
+	let platform = drawGradientRect(width, height, boxGradientProperties, _platformStyle.linewidth, _platformStyle.stroke);
+	return platform;
+}
+
+function extractStyleStatic (theme, name) {
+	let styleObj = theme.getStyles(name);
+	let styleToUse = styleObj.styleToUse;
+	// let styleToUse = 'tactile';
+
+	let style = styleObj.hasOwnProperty(styleToUse) ? styleObj[styleToUse] : styleObj['default'];
+	return style;
+}
+
+/**
+ * Add this to the theme if you need to draw a platform
+ */
+export const platform = {
+	'styleToUse': 'default',
+	'default': {
+		'colors': COLOR.PLATFORM_GRADIENT,
+		'stroke': COLOR.FILL_ORANGE_STROKE,
+		'linewidth': 2 // STROKE.STROKE_BOLD
+	},
+	'tactile': {
+		'colors': COLOR.COIN_METAL_GRADIENT, // [COLOR.BLACK, COLOR.BLACK],
+		'stroke': COLOR.BLACK,
+		'linewidth': 2 // STROKE.STROKE_BOLD
+	}
+}
+
 /**
  * Add this to the theme if you nedd draw a minus block
  */
