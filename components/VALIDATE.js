@@ -3,10 +3,14 @@ export class VALIDATE {
 		return (_input === undefined || _input === null) ? _defaultInput : _input;
 	}
 
+	static defaultStr (_input, _defaultInput) {
+		return (_input === undefined || _input === null || _input === '') ? _defaultInput : _input;
+	}
+
 	static defaultNum (_input, _defaultInput) {
 		const ZERO = 0;
-		const current = VALIDATE.defaultArg(Number(_input), _defaultInput);
-		return Number.isNaN(current) ? VALIDATE.defaultArg(_defaultInput, ZERO) : Number(_input);
+		const current = VALIDATE.defaultArg(Number(_input), Number(_defaultInput));
+		return Number.isNaN(current) ? VALIDATE.defaultArg(Number(_defaultInput), ZERO) : Number(_input);
 	}
 
 	static requiredArg (_input, _mssg) {
