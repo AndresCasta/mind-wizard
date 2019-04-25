@@ -14,7 +14,7 @@ export class VALIDATE {
 	}
 
 	static requiredArg (_input, _mssg) {
-		if (_input === undefined || _input === null) throw new Error(_mssg);
+		if (typeof(_input) === 'undefined' || _input === null) throw new Error(_mssg);
 		else return _input;
 	}
 
