@@ -3,6 +3,14 @@ Esta es una version mejorada de las tareas definidas por defecto por mind. Entre
 
 *NOTA: Se recomienda tener el terminal en el directorio raiz del proyecto antes de ejecutar estos comandos.*
 
+## Instalación
+1. **npm install** // si aun no lo has hecho
+2. **jspm install** // si aun no lo has hecho.
+3. **npm i --save-dev gulp-rename** // to allow folder rename.
+4. **npm i --save-dev gulp-replace** // to allow file strings replace.
+5. **npm i --save-dev gulp-watch** // improved gulp watcher by using chokidar
+6. Listo para usar.
+
 ## gulp configureProject
 Con esta tarea podras crear una nueva arena a partir de una arena plantilla, (por defecto se utiliza ExampleGame como plantilla). Esta tarea simplifica significativamente el proceso de iniciar un nuevo proyecto ya que hara por ti lo siguiente:
 
@@ -19,7 +27,7 @@ Para ejecutar el proyecto generado debes utilizar la siguiente dirección:
 
 ```
 // Nota el /testgen/ en lugar del /test/
-http://localhost:8081/testgen/
+http://localhost:8080/testgen/
 ```
 
 ### Ejemplo
@@ -31,19 +39,8 @@ gulp configureProject ---name newProjectName ---xmlLevelSrc ./DemoLevel.xml ---t
 | Flag        | Descripción           | Es obligatorio?  |
 | ------------- |:-------------| :-----|
 | ---name      | El nombre del nuevo proyecto | Obligatorio |
-| ---template      | El nombre de la arena ubicada en PixiArenas/ que se utilizara como plantilla      |  Opcional (Por defecto se usará ExampleGame)  |
+| ---template      | El nombre de la arena ubicada en PixiArenas/ que se utilizará como plantilla      |  Opcional (Por defecto se usará ExampleGame)  |
 | ---xmlLevelSrc | La ubicación del nivel en XML si se especifica automaticamente se generará el schema y se agregara en todos los archivos necesarios      |    Opcional |
-
-### Dependencias
-Esta tarea necesita que instales los siguientes paquetes.:
-
-```bash
-npm i --save-dev gulp-rename // to allow folder rename.
-```
-
-```bash
-npm i --save-dev gulp-replace // to allow file strings replace.
-```
 
 ### Nota 1
 Ten en cuenta que debes modificar el schema generado automaticamente. Por ejemplo: para quitar campos requeridos o cambiar los tipos de datos.
@@ -90,10 +87,10 @@ sprite.texture = this.resources['ufo_feedback_12fps_assets_frame004'].texture;
 ## gulp cropSvg
 Esta tarea esta pensada para remplazar cropSvg.js hace exactamente lo mismo, ademas no necesita que el usuario agregue a la variable de entorno PATH del sistema la ubicación de inkscape.
 
-Cabe decir que esta utilidad no busca recursivamente archivos .svg en carpetas hijas.
+*NOTA: esta utilidad no busca recursivamente archivos **.svg** en carpetas hijas.*
 
 ### Ejemplo
-Recorta todas los svg en la carpeta cropMe
+Recorta todas los **svg** en la carpeta cropMe
 
 ```bash
 gulp cropSvg ---src ./assets/ExampleGame/cropMe/
