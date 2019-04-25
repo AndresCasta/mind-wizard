@@ -31,10 +31,11 @@ Permite reproducir secuencias de imagenes en una animación, esta versión modif
 Evaluador de expresiónes matematicas minimalista, te ayudará a renderizar operaciones matematicas en multiples pasos, ademas te permitira conocer y configurar la precedencia fácilmente.
 
 ## [VALIDATE](https://github.com/AndresCasta/mind-wizard/tree/master/components/VALIDATE)
-![](https://imgur.com/jobly9X.gif)
 
-Evaluador de expresiónes matematicas minimalista, te ayudará a renderizar operaciones matematicas en multiples pasos, ademas te permitira conocer y configurar la precedencia fácilmente.
-
+Libreria minimalista de aserttions, puede validar:
+1. Tipos de datos
+2. Asignar valores por defecto a variables undefined.
+3. Assert conditions. 
 
 # Utilidades
 ## [BashScripts](https://github.com/AndresCasta/mind-wizard/tree/master/automation/BashScripts)
