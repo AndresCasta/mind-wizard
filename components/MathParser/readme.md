@@ -104,7 +104,7 @@ let operateOrder = tokenInstance.operateOrder; // number indicating the order in
 
 
 ## Ejemplo de la vida real
-1. [OperationRace](https://github.com/stmath/mind-games-OperationRace/blob/939286fe3c61925d38955624f315ccfc13f104dd/PixiArenas/OperationRace/views/MainView.js#L2032). En este ejemplo no se eutilizó el arbol de sintaxis abstracta para renderizar las operaciones.
+1. [OperationRace](https://github.com/stmath/mind-games-OperationRace/blob/939286fe3c61925d38955624f315ccfc13f104dd/PixiArenas/OperationRace/views/MainView.js#L2032). En este ejemplo no se utilizó el arbol de sintaxis abstracta para renderizar las operaciones.
 
 ## Lecturas adicionales
 1. [Parsing math expressions with JavaScript](https://medium.freecodecamp.org/parsing-math-expressions-with-javascript-7e8f5572276e)
