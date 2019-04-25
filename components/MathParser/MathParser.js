@@ -755,7 +755,7 @@ export class Token {
 		this.isImplicit = false;		// this token was added automatically by the tokenizer (lexical analize engine))
 		this.isSingleExponent = false;	// is this token a literal exponent? 2^4 will set isSingleExponent = true on token 4, but not on (2+2) at 2 ^ (2 + 2)
 		this.isRedundant = false;		// a redundant token is a token that is 'wasting' space, for example at (6), the left and right parenthesis are redundant, so those tokens will be marked as redundant
-		this.operateOrder = -1; 		// numbar indincating the order in which should be evluated the current expression (should be positive)
+		this.operateOrder = -1; 		// number indicating the order in which should be evluated the current expression (should be positive)
 	}
 
 	/**

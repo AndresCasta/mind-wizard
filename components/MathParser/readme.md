@@ -99,7 +99,7 @@ let isImplicit = tokenInstance.isImplicit; // this token was added automatically
 let isRedundant = tokenInstance.isRedundant; // a redundant token is a token that is 'wasting' space, for example at (6), the left and right parenthesis are redundant, so those tokens will be marked as redundant but they aren't going to be removed.
 
 
-let operateOrder = tokenInstance.operateOrder; // numbar indicating the order in which should be evluated the current expression (should be positive)
+let operateOrder = tokenInstance.operateOrder; // number indicating the order in which should be evluated the current expression (should be positive)
 ```
 
 
