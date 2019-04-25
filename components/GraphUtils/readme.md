@@ -9,6 +9,7 @@
 ## generateRoundRect()
 
 ## formatColor()
+Convert color from **rgb(r, g, b)** a **0xRRGGBB**
 
 ## drawGradientRect()
 
@@ -35,6 +36,16 @@ sprite.texture = cartMiddleTexture;
 
 
 ## drawMinusBlock()
+
+## createPlatform()
+![](https://imgur.com/crHSZIF.gif)
+
+```javascript
+// the createPlatform method has into account the tactile theme.
+let platformSprite = new MindPixiSprite();
+platformSprite.texture = this.createPlatform(width, height).texture;
+this.addChild(platformSprite);
+```
 
 ## renderDotsOnBezierPath()
 ![](https://imgur.com/cbyXGdE.gif)
