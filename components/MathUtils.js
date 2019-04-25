@@ -211,6 +211,52 @@ export class MathUtils {
 		return (rInt8 << RED_SHIFT) | (gInt8 << GREEN_SHIFT) | bInt8;
 	}
 
+	/**
+	 * @author Romualdo Villalobos
+	 * Convert uint24_t (8bits per channel) color to vector3 and scale volor by a given factor
+	 * @param {number} color uint24_t number representing a color
+	 * @param {number} brightness number representing the brightness factor
+	 * @returns {number} uint24_t number representing the mix
+	 */
+	static scaleColor (color, brightness) {
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
+
+		const colorAvec = MathUtils.vector3((color & RED_MASK) >> RED_SHIFT, (color & GREEN_MASK) >> GREEN_SHIFT, (color & BLUE_MASK) >> BLUE_SHIFT);
+
+		const newColor = MathUtils.vector3Scale(colorAvec, brightness)//Mix(t, colorAvec, colorBvec);
+
+		let rInt8 = Number.parseInt(newColor.x);
+		let gInt8 = Number.parseInt(newColor.y);
+		let bInt8 = Number.parseInt(newColor.z);
+
+		return (rInt8 << RED_SHIFT) | (gInt8 << GREEN_SHIFT) | bInt8;
+	}
+
+	/**
+	 * @author Romualdo Villalobos
+	 * Convert uint24_t (8bits per channel) color to vector3 and scale volor by a given factor
+	 * @param {number} color uint24_t number representing a color
+	 * @param {number} brightness number representing the brightness factor
+	 * @returns {number} uint24_t number representing the mix
+	 */
+	static changeColorIntensity (color, brightness) {
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
+
+		const colorAvec = MathUtils.vector3((color & RED_MASK) >> RED_SHIFT, (color & GREEN_MASK) >> GREEN_SHIFT, (color & BLUE_MASK) >> BLUE_SHIFT);
+
+		const newColor = MathUtils.vector3Scale(colorAvec, brightness)//Mix(t, colorAvec, colorBvec);
+
+		let rInt8 = Number.parseInt(newColor.x);
+		let gInt8 = Number.parseInt(newColor.y);
+		let bInt8 = Number.parseInt(newColor.z);
+
+		return (rInt8 << RED_SHIFT) | (gInt8 << GREEN_SHIFT) | bInt8;
+	}
+
 	static vector2 (x, y) {
 		return {
 			x: Number(x),
