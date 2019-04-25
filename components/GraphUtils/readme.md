@@ -1,0 +1,56 @@
+# GraphUtils
+
+## drawDashedPolygon()
+
+## generateCircle()
+
+## generateRect()
+
+## generateRoundRect()
+
+## formatColor()
+
+## drawGradientRect()
+
+## drawGradientRect2()
+
+## drawGradientRectTexture()
+
+## drawGradientCircleTexture()
+
+## createTillingSprite()
+En [StimateTotalCost](https://github.com/stmath/mind-games-EstimateTotalCost/blob/16a87fd23ecea56a91960d6b53ed61a043ccf27c/PixiArenas/EstimateTotalCost/components/ShopCart.js#L45) se necesita estirar el sprite del carrito de compras cada vez que se le agrega un nuevo objeto.
+
+![](https://imgur.com/huIpvZc.gif)![](https://imgur.com/RkJe2Eq.gif)
+
+Para esto se utilizara la clase **PIXI.extras.TilingSprite**. Si en lugar de utilizar esta clase decidimos escalar un sprite, se corre el riesgo de que dicho sprite se deforme y/o desenfoque.
+
+El metodo **createTillingSprite()** regresara un MindPixiSprite o un texture, ten en cuenta que si debes rescalar dicho sprite tendras que crear otro tilling sprite ya que no podemos cambiar el width y/o height del sprite para evitar deformar el sprite.
+
+```javascript
+let returnTexture = true;
+let cartMiddleTexture = createTillingSprite(idCartMiddleTexture, this.maxWidth, this.cartEnd.height, returnTexture);
+sprite.texture = cartMiddleTexture;
+```
+
+
+## drawMinusBlock()
+
+## renderDotsOnBezierPath()
+![](https://imgur.com/cbyXGdE.gif)
+Dibuja una curva bezier. Permite analizar un recorrido bezier que se pasara posteriormente a un tween.
+
+```javascript
+let path = this._generatePath(); // generates a bezier path. see: https://greensock.com/docs/Plugins/BezierPlugin
+let bezierOptions = {
+    type: 'cubic',
+    values: path // ,
+    // autoRotate: ['x', 'y', 'rotation', rotationOffset, true]
+};
+
+let coordinateSpace = this;
+let smaplingPoints = 100;
+let color = COLOR.FILL_BROWN; // if undefined is used: COLOR.FILL_BROWN
+let pointRadius = 1;
+renderDotsOnBezierPath(coordinateSpace, smaplingPoints, bezierOptions, color, pointRadius);
+```

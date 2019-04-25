@@ -184,7 +184,6 @@ export function generateRoundRect (w, h, rad) {
 * Format color (css format) to hexadecimal
 *
 */
-
 export function formatColor (color) {
 	let colorIn = color;
 	let colorOut = color;
@@ -280,6 +279,84 @@ export function drawGradientRect (width, height, gradientProperties, lineWidth, 
 	return container;
 }
 
+/**
+ * 
+ * @param {*} width 
+ * @param {*} height 
+ * @param {*} gradientProperties 
+ * @param {*} lineWidth 
+ * @param {*} lineColor 
+ */
+export function drawGradientRect2 (width, height, gradientProperties, lineWidth, lineColor) {
+	let container = new MindPixiContainer();
+	let _arena = container.arena;
+
+	let GradientBox = new MindPixiSprite(undefined, { Rng: _arena.Rng });
+	const RESOLUTION_SCALE = 2;
+	// const POSITION_ZERO = 0;
+
+	// create a linear gradient
+	let gradientW = width;
+	let gradientH = height;
+
+	if (gradientProperties === undefined) {
+		gradientProperties = {
+			type: 'linear',
+			w: gradientW, //     [Linear/Radial: ending radius of gradient]
+			h: gradientH, //     [Linear/Radial: ending radius of gradient]
+			x0: 25,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+			y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+			x1: 25,
+			y1: gradientH,
+			colorStops: COLOR.PLATFORM_GRADIENT
+		};
+	}
+
+	// we will grab the texture from this container.
+
+	let newGradientGenerator = new MindGradient(gradientProperties);
+
+	let gradientSprite = new MindPixiSprite(newGradientGenerator.Texture(), { Rng: _arena.Rng });
+
+	let w = gradientSprite.width;
+	let h = gradientSprite.height;
+
+	let renderNoLineTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+	_arena.app.renderer.render(gradientSprite, renderNoLineTexture);
+	GradientBox._textureNoline = renderNoLineTexture;
+
+	// now draw stroke
+	let graphics = new MindPixiGraphics();
+
+	// add both the gradient and the stroke into the container.
+	// if you want to add the stroke on top, addChild it after.
+	container.addChild(gradientSprite);
+	// strokes are not considered in bounds calculations so we must calculate it ourselves.
+
+	// generate the id however, but this is oneway to cache in texture manager.
+	let id = JSON.stringify(gradientProperties) + JSON.stringify(graphics.graphicsData);
+	let texture = MindTextureManager.getTexture(id);
+
+	if (!texture) {
+		let renderTexture = new _arena.PIXI.RenderTexture.create(w, h, undefined, RESOLUTION_SCALE);
+		_arena.app.renderer.render(container, renderTexture);
+		texture = renderTexture;
+		MindTextureManager.saveTexture(id, texture);
+	}
+	GradientBox.texture = texture;
+
+	GradientBox._mainTexture = texture;
+
+	// destroy container
+	container.destroy(true);
+	if (container.parent) {
+		container.parent.removeChild(container);
+	}
+
+	return GradientBox;
+}
+
+
 export function drawGradientRectTexture (width, height, gradientProperties, lineWidth, lineColor, lineAlpha = COLOR.ALPHA_BLACK_2) {
 	let container = new MindPixiContainer();
 	let _arena = container.arena;
@@ -349,7 +426,7 @@ export function drawGradientRectTexture (width, height, gradientProperties, line
 }
 
 /**
- *
+ * DEPRECATED: THIS OVER uSE THE GPU
  * @param {*} radius
  * @param {*} gradientProperties
  * @param {*} lineWidth
@@ -592,6 +669,40 @@ export function drawMinusBlock (width, height) {
 	};
 
 	return _block;
+}
+
+/**
+ * Draw a bezier path.
+ * See https://greensock.com/bezier-as for more info about bezier options
+ * @param {*} coordinateSpace
+ * @param {*} quantity
+ * @param {*} bezierSettings
+ * @param {*} color
+ * @param {*} radius
+ */
+export function renderDotsOnBezierPath (coordinateSpace, quantity, bezierSettings, color = COLOR.FILL_BROWN, radius = COMMON_NUMBERS.FIVE) {
+	let zero = 0;
+	let path = bezierSettings.values;
+	let position = { x: path[zero].x, y: [path[zero].y] }; // tracks the current position, so we set it initially to the first node in the path. It's the target of the tween.
+	let tween = TweenMax.to(position, quantity, {
+		bezier: bezierSettings,
+		ease: Linear.easeNone
+	}); // this does all the work of figuring out the positions over time.
+	let dot;
+	let container = new MindPixiContainer();
+
+	for (let i = 0; i < quantity; i++) {
+		tween.time(i); // jumps to the appropriate time in the tween, causing position.x and position.y to be updated accordingly.
+		dot = new MindPixiGraphics();
+		dot.beginFill(color);
+		let x = position.x;
+		let	y = position.y;
+		dot.drawCircle(x, y, radius);
+
+		container.addChild(dot);
+		coordinateSpace.addChild(container);
+		// dot = $("<div />", {id:"dot"+i}).addClass("dot").css({left:position.x+"px", top:position.y+"px"}).appendTo("body"); //create a new dot, add the .dot class, set the position, and add it to the body.
+	}
 }
 
 /**
