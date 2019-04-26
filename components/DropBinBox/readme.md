@@ -77,7 +77,7 @@ _createDropBinBox (position, width, height, radius, alignment) {
 ```
 
 Paste this in your theme file:
-```json
+```
 'dropBinBoxMode1': {
     'styleToUse': 'default',
     'default': {

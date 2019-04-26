@@ -73,7 +73,7 @@ Puede ocurrir que cuando se cambia de tema en un juego, aparezca un pequeño cua
 izquierda de la pantalla, esto se debe a que hay una discrepancia entre los estilos declarados en el theme, y en el
 json del juego (donde se declara styleToUse = 'tactile'), un elemento existe en el json, pero no existe en el theme.
 
-## Posicionar en una region definida elementos que no tienen la misma dimension.
+## Posicionar en una region definida elementos que no tienen el mismo tamaño.
 ![](https://imgur.com/6uKUk4h.gif)
 
 Este algoritmo simple se inspira en el [box-model](https://www.w3schools.com/css/css_boxmodel.asp) descrito en la especificacion de CSS2.
