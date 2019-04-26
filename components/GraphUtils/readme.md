@@ -12,6 +12,8 @@
 Convert color from **rgb(r, g, b)** a **0xRRGGBB**
 
 ## drawGradientRect()
+Dibuja un rectangulo con gradiente y borde, se utiliza para dibujar la plataforma.
+
 
 ## drawGradientRect2()
 
@@ -60,6 +62,7 @@ this.addChild(platformSprite);
 
 ## renderDotsOnBezierPath()
 ![](https://imgur.com/cbyXGdE.gif)
+
 Dibuja una curva bezier. Permite analizar un recorrido bezier que se pasara posteriormente a un tween.
 
 ```javascript

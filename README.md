@@ -62,4 +62,71 @@ Snippets donde esta la recopilación de soluciones a problemas comunes.
 
 # Algunas soluciones a problemas comunes.
 
-## Posicionamiento
+## Algunos elementos pierden su posicionamiento en el test harness
+En el test harness se llama el evento onResize y el metodo .render() de los componentes de mind cada vez que se interactua con el menu de la izquierda, esto puede llevar a que algunos elementos pierdan el posicionamiento deseado en el viewport.
+
+## Aparece un cuadro negro en la esquina cuando se cambia de tema.
+Puede ocurrir que cuando se cambia de tema en un juego, aparezca un pequeño cuadrado negro en la esquina superior
+izquierda de la pantalla, esto se debe a que hay una discrepancia entre los estilos declarados en el theme, y en el
+json del juego (donde se declara styleToUse = 'tactile'), un elemento existe en el json, pero no existe en el theme.
+
+## Posicionar en una region definida elementos que no tienen la misma dimension.
+![](https://imgur.com/6uKUk4h.gif)
+Este algoritmo simple se inspira en el [box-model](https://www.w3schools.com/css/css_boxmodel.asp) descrito en la especificacion de CSS2.
+
+*NOTA: Este snippet se encuentra definido en el [archivo de snippets](https://github.com/AndresCasta/mind-wizard/tree/master/automation/vsSnippets)*
+
+Usa el siguiente diagrama para entender las variables:
+![](https://imgur.com/kysY9IY.gif)
+
+```javascript
+let cellSidesPadding = 10;
+// Defines the region in which we are goig to positionate the elements.
+let layoutX = 100; // layout origin (tope-left corner)
+let layoutY = 100; // layout origin (tope-left corner)
+let layoutWidth = 128;
+let layoutHeight = 58;
+
+// Define box dimensions.
+// a box represents an item.
+let cols = 5;
+let boxWidth = layoutWidth / cols;
+let rows = 2; // the number of rows to fit the boxes
+let boxHeight = layoutHeight / rows; // the height of each row.
+
+let contentWidth = boxWidth - cellSidesPadding;
+
+// Where sprites is an array of MindPixiSprite instances.
+for (let i = 0; i < sprites.length; i++) {
+    let sprite = sprites[i];
+
+    // adjust the sprite scale
+    // Adjust critter width to box's content width
+    let scaleFactor = contentWidth / sprite.width;
+    // Check critter height is not outside of box's content height
+    if ((sprite.width * scaleFactor) > contentHeight) {
+        scaleFactor = contentHeight / sprite.height;
+    }
+
+    // The position, this supports multirow positioning inside the layout area.
+    let thePosition = {
+        x: initX + (i % cols) * boxWidth,
+        y: initY + boxHeight * Math.floor(i / cols)
+    };
+
+    // Apply the computed scale factor.
+    sprite.scale.set(scaleFactor);
+
+    // Apply the computed position.
+    sprite.position.x = thePos.x;
+    sprite.position.y = thePos.y;
+
+}
+```
+Como se puede entender en el algoritmo los sprites agregados al arreglo **sprites** se posicionaran automaticamente dentro del layout sin importar si su tamaño es distinto.
+
+**Lecturas adicionales:**
+1. [box-model specification](https://www.w3.org/TR/CSS2/box.html)
+
+## Problemas de referencias
+
