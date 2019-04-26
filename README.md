@@ -41,6 +41,9 @@ Libreria minimalista de aserttions, puede validar:
 
 Coleccion de funciones para dibujar figuras.
 
+## [DropBinBox](https://github.com/AndresCasta/mind-wizard/tree/master/components/DropBinBox)
+![](https://imgur.com/4No9efK.gif)![](https://imgur.com/3kVcpHh.gif)
+
 
 # Utilidades
 ## [BashScripts](https://github.com/AndresCasta/mind-wizard/tree/master/automation/BashScripts)
@@ -72,6 +75,7 @@ json del juego (donde se declara styleToUse = 'tactile'), un elemento existe en 
 
 ## Posicionar en una region definida elementos que no tienen la misma dimension.
 ![](https://imgur.com/6uKUk4h.gif)
+
 Este algoritmo simple se inspira en el [box-model](https://www.w3schools.com/css/css_boxmodel.asp) descrito en la especificacion de CSS2.
 
 *NOTA: Este snippet se encuentra definido en el [archivo de snippets](https://github.com/AndresCasta/mind-wizard/tree/master/automation/vsSnippets)*
@@ -98,9 +102,9 @@ let boxHeight = layoutHeight / rows; // the height of each row.
 
 let contentWidth = boxWidth - cellSidesPadding;
 
-// Where sprites is an array of MindPixiSprite instances.
-for (let i = 0; i < sprites.length; i++) {
-    let sprite = sprites[i];
+// Where spritesArray is an array of MindPixiSprite instances.
+for (let i = 0; i < spritesArray.length; i++) {
+    let sprite = spritesArray[i];
 
     // adjust the sprite scale
     // Adjust critter width to box's content width
@@ -125,10 +129,7 @@ for (let i = 0; i < sprites.length; i++) {
 
 }
 ```
-Como se puede entender en el algoritmo los sprites agregados al arreglo **sprites** se posicionaran automaticamente dentro del layout sin importar si su tamaño es distinto.
+Como se puede entender en el algoritmo los sprites agregados al arreglo **spritesArray** se posicionaran automaticamente dentro del layout sin importar si su tamaño es distinto.
 
 **Lecturas adicionales:**
 1. [box-model specification](https://www.w3.org/TR/CSS2/box.html)
-
-## Problemas de referencias
-
