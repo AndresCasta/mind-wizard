@@ -70,6 +70,54 @@
 	// #############################################
 	// ## CUSTOMS
 	// #############################################
+	// #region POSITIONING ALGORITHMS
+	"basic": {
+		"scope": "javascript", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "positioning",
+		"body": [
+			"let cellSidesPadding = 10;",
+			"// Defines the region in which we are goig to positionate the elements.",
+			"let layoutX = 100; // layout origin (tope-left corner)",
+			"let layoutY = 100; // layout origin (tope-left corner)",
+			"let layoutWidth = 128;",
+			"let layoutHeight = 58;\n",
+			"// A box represents an item.",
+			"// Define box dimensions.",
+			"let cols = 5;",
+			"let boxWidth = layoutWidth / cols;",
+			"let rows = 2; // the number of rows to fit the boxes",
+			"let boxHeight = layoutHeight / rows; // the height of each row.",
+			"let contentWidth = boxWidth - cellSidesPadding;\n",
+			
+			"// Where sprites is an array of MindPixiSprite instances.\n",
+			"for (let i = 0; i < sprites.length; i++) {",
+			"\tlet sprite = sprites[i];",
+    		"\t// adjust the sprite scale",
+    		"\t// Adjust critter width to box's content width",
+    		"\tlet scaleFactor = contentWidth / sprite.width;",
+    		"\t// Check critter height is not outside of box's content height",
+    		"\tif ((sprite.width * scaleFactor) > contentHeight) {",
+        	"\t\tscaleFactor = contentHeight / sprite.height;",
+    		"}\n",
+
+    		"\t// The position, this supports multirow positioning inside the layout area.",
+    		"\tlet thePosition = {",
+        	"\t\tx: initX + (i % cols) * boxWidth,",
+        	"\t\ty: initY + boxHeight * Math.floor(i / cols)",
+    		"\t};\n",
+
+			"\t// Apply the computed scale factor.",
+			"\tsprite.scale.set(scaleFactor);\n",
+
+			"\t// Apply the computed position.",
+			"\tsprite.position.x = thePos.x;",
+			"\tsprite.position.y = thePos.y;\n",
+
+			"}"
+		]
+	},
+	// #endregion POSITIONING ALGORITHMS
+
 	// #region COMMENTS
 	"puzzleName": {
 		"scope": "javascript,jsonc", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers

@@ -76,6 +76,8 @@ Este algoritmo simple se inspira en el [box-model](https://www.w3schools.com/css
 
 *NOTA: Este snippet se encuentra definido en el [archivo de snippets](https://github.com/AndresCasta/mind-wizard/tree/master/automation/vsSnippets)*
 
+El main-axis por defecto es de izquierda a derecha mientras que el secondary-axis por defecto es de arriba abajo.
+
 Usa el siguiente diagrama para entender las variables:
 ![](https://imgur.com/kysY9IY.gif)
 
@@ -87,8 +89,8 @@ let layoutY = 100; // layout origin (tope-left corner)
 let layoutWidth = 128;
 let layoutHeight = 58;
 
+// A box represents an item.
 // Define box dimensions.
-// a box represents an item.
 let cols = 5;
 let boxWidth = layoutWidth / cols;
 let rows = 2; // the number of rows to fit the boxes
