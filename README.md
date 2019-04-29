@@ -87,46 +87,56 @@ Usa el siguiente diagrama para entender las variables:
 
 ```javascript
 let cellSidesPadding = 10;
+
 // Defines the region in which we are goig to positionate the elements.
-let layoutX = 100; // layout origin (tope-left corner)
-let layoutY = 100; // layout origin (tope-left corner)
-let layoutWidth = 128;
-let layoutHeight = 58;
+let layoutX = 0; // layout origin (tope-left corner)
+// TODO: Change this according to the number of elements
+let layoutY = 320; // layout origin (tope-left corner)
+let layoutWidth = canvasBounds.width * 0.85;
+let layoutHeight = 120;
+layoutX = (canvasBounds.width - layoutWidth) * COMMON_NUMBERS.DIV_2;
 
 // A box represents an item.
 // Define box dimensions.
-let cols = 5;
+let cols = 10;
 let boxWidth = layoutWidth / cols;
 let rows = 2; // the number of rows to fit the boxes
 let boxHeight = layoutHeight / rows; // the height of each row.
+let finalShoePositions = [];
 
 let contentWidth = boxWidth - cellSidesPadding;
+let contentHeight = boxHeight - cellSidesPadding;
 
+let spritesArray = yourSpriterArrayHere;
+
+// If number of shoes is less than the number of columns
+if (spritesArray.length < cols) {
+    let rowWidth = spritesArray.length * boxWidth;
+    layoutX = (canvasBounds.width - rowWidth) * COMMON_NUMBERS.DIV_2;
+}
 // Where spritesArray is an array of MindPixiSprite instances.
 for (let i = 0; i < spritesArray.length; i++) {
     let sprite = spritesArray[i];
 
     // adjust the sprite scale
-    // Adjust critter width to box's content width
-    let scaleFactor = contentWidth / sprite.width;
-    // Check critter height is not outside of box's content height
-    if ((sprite.width * scaleFactor) > contentHeight) {
-        scaleFactor = contentHeight / sprite.height;
-    }
+    // 	// Adjust critter width to box's content width
+    // let scaleFactor = contentWidth / sprite.width;
+    // 	// Check critter height is not outside of box's content height
+    // if ((sprite.width * scaleFactor) > contentHeight) {
+    // 	scaleFactor = contentHeight / sprite.height;
+    // }
 
-    // The position, this supports multirow positioning inside the layout area.
     let thePosition = {
-        x: initX + (i % cols) * boxWidth,
-        y: initY + boxHeight * Math.floor(i / cols)
+        x: layoutX + (i % cols) * boxWidth,
+        y: layoutY + boxHeight * Math.floor(i / cols)
     };
 
-    // Apply the computed scale factor.
-    sprite.scale.set(scaleFactor);
+    // 	// Apply the computed scale factor.
+    // sprite.scale.set(scaleFactor);
 
     // Apply the computed position.
-    sprite.position.x = thePos.x;
-    sprite.position.y = thePos.y;
-
+    sprite.position.x = thePosition.x;
+    sprite.position.y = thePosition.y;
 }
 ```
 Como se puede entender en el algoritmo los sprites agregados al arreglo **spritesArray** se posicionaran automaticamente dentro del layout sin importar si su tamaño es distinto.
