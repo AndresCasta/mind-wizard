@@ -5,7 +5,7 @@ Si tienes un problema en donde tienes 3 sprites y el sprite del medio se tiene q
 
 ## Ejemplo de uso
 ```javascript
-const cart = new SimpleTiledSprite({ tileWidth: 500 });
+const cart = new SimpleTiledSprite({ tileWidth: 500 }); // tileWidth is the width of the mid sprite.
 cart.anchor.set(ZERO); // you can set the anchor of the sprite combinations just as you change the anchor of an sprite.
 parent.addChild(cart); // add the TiledSprite to a contanier.
 ```
