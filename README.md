@@ -45,6 +45,11 @@ Coleccion de funciones para dibujar figuras.
 ![](https://imgur.com/4No9efK.gif)![](https://imgur.com/3kVcpHh.gif)
 
 
+## [SimpleTiledSprite](https://github.com/AndresCasta/mind-wizard/tree/master/components/SimpleTiledSprite)
+![](https://imgur.com/jLw8ycH.gif)
+
+Si tienes un problema en donde tienes 3 sprites y el sprite del medio se tiene que ir haciendo ancho mientras la posicion de los sprites de los extremos se deben ir actualizando. este componente puede ahorrarte algunas horas.
+
 # Utilidades
 ## [BashScripts](https://github.com/AndresCasta/mind-wizard/tree/master/automation/BashScripts)
 Scripts del bash para:
