@@ -516,7 +516,9 @@ export class MathParser {
 			}
 		}
 
-		return n;
+		// formats the number using fixed-point notation.
+		const fixedDigits = 6; // number of digits to appear after the decimal point; this may be a value between 0 and 20, inclusive
+		return Number(n.toFixed(fixedDigits));
 	}
 
     /**
