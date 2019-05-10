@@ -12,7 +12,8 @@ export class SimpleTiledSprite extends MindPixiSprite {
 	constructor (options = {}, mindObjectOptions) {
 		super(undefined, mindObjectOptions);
 
-		this.cartWidth = options.tileWidth || 64;
+		const N64 = 64;
+		this.cartWidth = options.tileWidth || N64;
 
 		this.textureManager = undefined;
 
@@ -105,7 +106,7 @@ export class SimpleTiledSprite extends MindPixiSprite {
 	_onThemeChanged (event) {
 		// store arguments and extract styles
 		const options = this._options;
-		this._style = options.styles || this.arena.ExtractStyle(options.styleId || 'simpleTiledSprite') || style;
+		this._style = options.styles || this.arena.ExtractStyle(options.styleId || 'simpleTiledSprite');
 
 		let cartStartTexture = this.resources[this._style.resourceIdInit].texture;
 		this.cartStart.texture = cartStartTexture;

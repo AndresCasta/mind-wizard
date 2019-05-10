@@ -46,5 +46,5 @@ const myTiledSprite = new SimpleTiledSprite({
         styleId: 'myCustomTiledSprite', // pass the style id.
         tileWidth: 500 // the width of the mid sprite.
     });
-parent.addChild(cart); // add the TiledSprite to a contanier.
+parent.addChild(myTiledSprite); // add the TiledSprite to a contanier.
 ```
