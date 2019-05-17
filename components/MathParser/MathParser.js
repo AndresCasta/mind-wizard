@@ -750,14 +750,51 @@ export class Token {
 		// eg: inside_group1, inside_group2, etc..
 		// the tokenizer should set this information
 		staticTokenUidGen++;
-		this.type = type;				// type of current token
-		this.value = value;				// value of current token
-		this.uid = staticTokenUidGen;	// token unique identifier
-		this.insideGroups = [];			// this token it is grouped by specified tokens objects
-		this.isImplicit = false;		// this token was added automatically by the tokenizer (lexical analize engine))
-		this.isSingleExponent = false;	// is this token a literal exponent? 2^4 will set isSingleExponent = true on token 4, but not on (2+2) at 2 ^ (2 + 2)
-		this.isRedundant = false;		// a redundant token is a token that is 'wasting' space, for example at (6), the left and right parenthesis are redundant, so those tokens will be marked as redundant
-		this.operateOrder = -1; 		// number indicating the order in which should be evluated the current expression (should be positive)
+
+		/**
+		 * type of current token, could be literal, operator, left parenthesis or right parenthesis
+		 */
+		this.type = type;
+
+		/**
+		 * string value of current token, eg: +, -, 10, the field is initialized during instancing
+		 */
+		this.value = value;
+
+		/**
+		 * token unique identifier, the field is initialized during instancing
+		 */
+		this.uid = staticTokenUidGen;
+
+		/**
+		 * this token it is grouped by specified uid tokens? array of right parentheses tokens that
+		 * are grouping this token, the field is initialized during MathParser::tokenize(string) invocation
+		 */
+		this.insideGroups = [];
+
+		/**
+		 * flag indicating if this token was added automatically by the tokenizer (lexical analize engine)),
+		 * the field is initialized during MathParser::tokenize(string) invocation
+		 */
+		this.isImplicit = false;
+
+		/**
+		 * is this token a literal exponent? ex: 2^4 will set isSingleExponent = true on token 4, but not on (2+2) tokens at 2 ^ (2 + 2)
+		 * the field is initialized during MathParser::tokenize(string) invocation
+		 */
+		this.isSingleExponent = false;
+
+		/**
+		 * a redundant token is a token that is 'wasting' space, for example at (6), the left and right parenthesis are redundant, so those tokens will be marked as redundant
+		 * the field is initialized during MathParser::extractTokensInfo(Token[]) invocation
+		 */
+		this.isRedundant = false;
+
+		/**
+		 * numbar indicating the order in which should be evluated the current expression (should be major equal than zero),
+		 * the field is initialized during MathParser::evaluate(Token[]) invocation
+		 */
+		this.operateOrder = -1;
 	}
 
 	/**
