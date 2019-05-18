@@ -179,3 +179,29 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 		return new AnimatedSprite(textureArr);
 	}
 }
+
+export const styles = {
+	'styleToUse': 'default',
+	'default': {
+		'glowableText': {
+			'colorStyleName': 'colorStyle',
+			'redStyleName': 'redStyle',
+			'alpha': 1
+		},
+		'glowableSprite': {
+			'tint': -1, // white
+			'alpha': 1
+		}
+	},
+	'tactile': {
+		'glowableText': {
+			'colorStyleName': 'colorStyleHC',
+			'redStyleName': 'redStyleHC',
+			'alpha': 0.5
+		},
+		'glowableSprite': {
+			'tint': 0, // black
+			'alpha': 0.5
+		}
+	}
+};
