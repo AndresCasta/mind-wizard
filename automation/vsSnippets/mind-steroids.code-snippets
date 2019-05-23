@@ -68,6 +68,40 @@
 	// #endregion TWEEN
 
 	// #############################################
+	// ## IMPORT SYSTEM
+	// #############################################
+	// #region IMPORT
+	"mindPixiContainer": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';"
+		]
+	},
+	"mindPixiSprite": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MindPixiSprite } from 'mind-sdk/mindPixi/MindPixiSprite';"
+		]
+	},
+	"mindPixiGraphics": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';"
+		]
+	},
+	"MindPixiText": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';"
+		]
+	},
+	// #endregion IMPORT
+
+	// #############################################
 	// ## CUSTOMS
 	// #############################################
 	// #region POSITIONING ALGORITHMS
