@@ -56,7 +56,7 @@ export class GraphicsWrapper extends MindPixiGraphics {
 		let changed = false;
 		for (let i = 0; i < this.graphicsData.length; i++) {
 			let currGraphicsData = this.graphicsData[i];
-			if (currGraphicsData[key]) {
+			if (currGraphicsData[key] !==  undefined) {
 				currGraphicsData[key] = value;
 				changed = true;
 			}
