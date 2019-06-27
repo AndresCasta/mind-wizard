@@ -7,6 +7,8 @@ const SIX = 6;
 const HEX = 16;
 const TEN = 10;
 
+var randomIdxArrays = [];
+
 export class MathUtils {
 	static polar2cartesian (deg, len) {
 		let x = len * Math.cos(MathUtils.deg2rad(deg));
@@ -520,5 +522,60 @@ export class MathUtils {
 
 		// Terminating decimal
 		return outpuObj;
+	}
+
+	static createListRandomIndexes (arena, numIndex, maxNumIndex) {
+		for (let i = 0; i < randomIdxArrays.length; i++) {
+			let currArr = randomIdxArrays[i];
+			if (currArr.seed === arena.Rng.seed && currArr.num === numIndex && currArr.maxNum === maxNumIndex) {
+				return currArr.array;
+			}
+		}
+
+		let indexes = [];
+		for (let i = 0; i < numIndex; i++) {
+			let newIdx = arena.Rng.range(ZERO, maxNumIndex);
+			if (indexes.length > ZERO) {
+				let fit = true;
+				for (let j = 0; j < indexes.length; j++) {
+					let currIdx = indexes[j];
+					if (newIdx === currIdx) {
+						fit = false;
+					}
+				}
+				if (fit) {
+					indexes.push(newIdx);
+				} else {
+					while (!fit) {
+						newIdx = arena.Rng.range(ZERO, maxNumIndex);
+						let currFit = true;
+						for (let j = 0; j < indexes.length; j++) {
+							let currIdx = indexes[j];
+							if (newIdx === currIdx) {
+								currFit = false;
+							}
+						}
+						fit = currFit;
+						if (fit) {
+							indexes.push(newIdx);
+						}
+					}
+				}
+			} else {
+				indexes.push(newIdx);
+			}
+		}
+		let newArrObj = {
+			seed: arena.Rng.seed,
+			num: numIndex,
+			maxNum: maxNumIndex,
+			array: indexes
+		};
+		randomIdxArrays.push(newArrObj);
+		return indexes;
+	}
+
+	static getRandomArbitrary (min, max) {
+		return Math.random() * (max - min) + min;
 	}
 }
