@@ -60,6 +60,16 @@ export class MathUtils {
 		return { x: a.x - b.x, y: a.y - b.y };
 	}
 
+	// distance betweem a and b
+	static vectorDistance (a, b) {
+		return MathUtils.vectorLen(MathUtils.vectorDiff(a, b));
+	}
+
+	// unit vector pointing to b from a
+	static vectorDirection (a, b) {
+		return MathUtils.vectorUnit(MathUtils.vectorDiff(b, a));
+	}
+
 	// a + b
 	static vectorAdd (a, b) {
 		return { x: a.x + b.x, y: a.y + b.y };
