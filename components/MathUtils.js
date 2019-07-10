@@ -258,10 +258,11 @@ export class MathUtils {
 	}
 
 	static vector3 (x, y, z) {
+		
 		return {
 			x: Number(x),
-			y: Number(y),
-			z: Number(z)
+			y: Number(y) || Number(x),
+			z: Number(z) || Number(x)
 		}
 	}
 
@@ -269,6 +270,20 @@ export class MathUtils {
 	// the following code was written in HLSL by Ian Taylor 
 	// and translated to JavaScript by Romualdo Villalobos
 	// #region
+	static floatSaturate (x) {
+  		return Math.max(0, Math.min(1, x));
+	}
+
+	// same as hlsl saturate for float3: https://developer.download.nvidia.com/cg/saturate.html
+	static vector3Saturate (vector3) {
+		return {
+			x: MathUtils.floatSaturate(vector3.x),
+			y: MathUtils.floatSaturate(vector3.y),
+			z: MathUtils.floatSaturate(vector3.z),
+		}
+	}
+
+	// float3 RGBtoHCV(in float3 RGB)
 	static RGBtoHCV(vecRGB){
 		// Based on work by Sam Hocevar and Emil Persson
 
@@ -288,18 +303,46 @@ export class MathUtils {
 		return { x: H, y: C, z: Q.x };
 	}
 
-	static RGBtoHSL (vecRGB)	{
+	// float3 RGBtoHSL(in float3 RGB)
+	static RGBtoHSL (vecRGB) {
+		// float3 HCV = RGBtoHCV(RGB);
 		const vecHCV = MathUtils.RGBtoHCV(vecRGB);
+
+		// float L = HCV.z - HCV.y * 0.5;
 		const L = vecHCV.z - vecHCV.y * 0.5;
+
+		// float S = HCV.y / (1 - abs(L * 2 - 1) + Epsilon);
 		const S = vecHCV.y / (1 - Math.abs(L * 2 - 1) + Number.EPSILON);
+
+		// return float3(HCV.x, S, L);
 		return { x: vecHCV.x, y: S, z: L};
 	}
 
-	static HSLtoRGB(vecHSL)
-	{
-	  const vecRGB = MathUtils.HUEtoRGB(vecHSL.x);
-	  const C = (1 - abs(2 * vecHSL.z - 1)) * vecHSL.y;
-	  // return (vecRGB - 0.5) * C + vecHSL.z;
+	// float3 HUEtoRGB(in float H) {
+	static HUEtoRGB(H) {
+		// float R = abs(H * 6 - 3) - 1;
+		const R = Math.abs(H * 6 - 3) - 1;
+
+		// float G = 2 - abs(H * 6 - 2);
+		const G = 2 - Math.abs(H * 6 - 2);
+
+		// float B = 2 - abs(H * 6 - 4);
+		const B = 2 - abs(H * 6 - 4);
+
+		// return saturate(float3(R,G,B));
+		return MathUtils.vector3Saturate({ x: R, y: G, z: B });
+	}
+
+	// float3 HSLtoRGB(in float3 HSL)
+	static HSLtoRGB(vecHSL) {
+		// float3 RGB = HUEtoRGB(HSL.x);
+		const vecRGB = MathUtils.HUEtoRGB(vecHSL.x);
+
+		// float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
+	  	const C = (1 - abs(2 * vecHSL.z - 1)) * vecHSL.y;
+
+	  	// return (vecRGB - 0.5) * C + vecHSL.z;
+	  	return MathUtils.vector3Add(MathUtils.vector3Scale(MathUtils.vector3Add(vecRGB, MathUtils.vector3(-0.5)), C), vecHSL.z);
 	}
 
 	// #endregion
