@@ -201,6 +201,13 @@ export class MathUtils {
 		return hex;
 	}
 
+	static uint24tColorToVector3 (uint24tColor) {
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
+		return MathUtils.vector3((uint24tColor & RED_MASK) >> RED_SHIFT, (uint24tColor & GREEN_MASK) >> GREEN_SHIFT, (uint24tColor & BLUE_MASK) >> BLUE_SHIFT);
+	}
+
 	/**
 	 * @author Romualdo Villalobos
 	 * Convert uint24_t (8bits per channel) color to vector3 and performs linear interpolation between colorA and colorB,
