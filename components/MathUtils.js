@@ -265,7 +265,44 @@ export class MathUtils {
 		}
 	}
 
+	// RGB to HSV/HSL/HCY/HCL in HLSL http://www.chilliant.com/rgb2hsv.html
+	// the following code was written in HLSL by Ian Taylor 
+	// and translated to JavaScript by Romualdo Villalobos
+	// #region
+	static RGBtoHCV(vecRGB){
+		// Based on work by Sam Hocevar and Emil Persson
 
+		// float4 P = (vecRGB.g < vecRGB.b) ? float4(vecRGB.bg, -1.0, 2.0/3.0) : float4(vecRGB.gb, 0.0, -1.0/3.0);
+		const P = (vecRGB.y < vecRGB.z) ? { x: vecRGB.z, y: vecRGB.y, z: -1.0, w: 2.0/3.0 } : { x: vecRGB.y, y: vecRGB.z, z: 0.0, w: -1.0/3.0 };
+		
+		// float4 Q = (vecRGB.r < P.x) ? float4(P.xyw, vecRGB.r) : float4(vecRGB.r, P.yzx);
+		const Q = (vecRGB.x < P.x) ? { x: P.x, y: P.y, z: P.w, w: vecRGB.x } : { x: vecRGB.x, y: P.y, z: P.z, w: P.x };
+
+		// float C = Q.x - min(Q.w, Q.y);
+		const C = Q.x - Math.min(Q.w, Q.y);
+
+		// float H = abs((Q.w - Q.y) / (6 * C + Epsilon) + Q.z);
+		const H = Math.abs((Q.w - Q.y) / (6 * C + Math.EPSILON) + Q.z);
+
+		// return float3(H, C, Q.x);
+		return { x: H, y: C, z: Q.x };
+	}
+
+	static RGBtoHSL (vecRGB)	{
+		const vecHCV = MathUtils.RGBtoHCV(vecRGB);
+		const L = vecHCV.z - vecHCV.y * 0.5;
+		const S = vecHCV.y / (1 - Math.abs(L * 2 - 1) + Number.EPSILON);
+		return { x: vecHCV.x, y: S, z: L};
+	}
+
+	static HSLtoRGB(vecHSL)
+	{
+	  const vecRGB = MathUtils.HUEtoRGB(vecHSL.x);
+	  const C = (1 - abs(2 * vecHSL.z - 1)) * vecHSL.y;
+	  // return (vecRGB - 0.5) * C + vecHSL.z;
+	}
+
+	// #endregion
 
 	static getDigitCount (number) {
 		return Math.max(Math.floor(Math.log10(Math.abs(number))), ZERO) + ONE;
