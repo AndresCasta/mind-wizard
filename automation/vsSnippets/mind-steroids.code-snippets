@@ -99,6 +99,92 @@
 			"import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';"
 		]
 	},
+	"MindTextureManager": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MindTextureManager } from 'mind-sdk/MindTextureManager';"
+		]
+	},
+	"MindGradient": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MindGradient } from 'mind-sdk/MindGradient';"
+		]
+	},
+	"ChainInput": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { ChainInput } from 'mind-game-components/ChainSelect/ChainInput';",
+			"import { ChainItemEvent } from 'mind-game-components/ChainSelect/base-mixin/ChainEvent';"
+		]
+	},
+	"ChainInput styles": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as ChainInputStyles } from 'mind-game-components/ChainSelect/ChainInput';"
+		]
+	},
+	"BoundaryButton": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { BoundaryButton } from 'mind-game-components/Button/innerBevelButton/BoundaryButton';"
+		]
+	},
+	"InnerBevelButton styles": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as BevelButtonStyles } from 'mind-game-components/Button/bevel/BaseBevelButton';"
+		]
+	},
+	"CardManager": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { CardManager } from 'mind-game-components/cardManager/CardManager';",
+			"import { CardHolderEvents } from 'mind-game-components/cardManager/holders/events/CardHolderEvents';"
+		]
+	},
+	"CardManager ResourceCardElement": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { ResourceCardElement } from 'mind-game-components/cardManager/ui/ResourceCardElement';"
+		]
+	},
+	"CardManager RoundRectCard": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { RoundRectCard } from 'mind-game-components/cardManager/ui/RoundRectCard';"
+		]
+	},
+	"FrickUtils": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { FrickUtils } from 'mind-game-components/frick/FrickUtils';"
+		]
+	},
+	"FrickUtils style": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as frickStyle } from 'mind-game-components/frick/Fricker';"
+		]
+	},
+	"Point object": {
+		"scope": "javascript",
+		"prefix": "point",
+		"body": [
+			"{ x: $1 , y: $2 };"
+		]
+	},
 	// #endregion IMPORT
 
 	// #############################################

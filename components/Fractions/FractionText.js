@@ -606,6 +606,7 @@ export class FractionText extends MindPixiContainer {
 
 	set fillColor (color) {
 		this.currentColor = color;
+		// redraw the expression
 		this.operation = this.operation;
 		this.representation = this.representation;
 		this.numerator = this.numerator;

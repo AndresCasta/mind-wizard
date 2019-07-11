@@ -7,6 +7,8 @@ const SIX = 6;
 const HEX = 16;
 const TEN = 10;
 
+var randomIdxArrays = [];
+
 export class MathUtils {
 	static polar2cartesian (deg, len) {
 		let x = len * Math.cos(MathUtils.deg2rad(deg));
@@ -56,6 +58,16 @@ export class MathUtils {
 	// a - b
 	static vectorDiff (a, b) {
 		return { x: a.x - b.x, y: a.y - b.y };
+	}
+
+	// distance betweem a and b
+	static vectorDistance (a, b) {
+		return MathUtils.vectorLen(MathUtils.vectorDiff(a, b));
+	}
+
+	// unit vector pointing to b from a
+	static vectorDirection (a, b) {
+		return MathUtils.vectorUnit(MathUtils.vectorDiff(b, a));
 	}
 
 	// a + b
@@ -189,6 +201,13 @@ export class MathUtils {
 		return hex;
 	}
 
+	static uint24tColorToVector3 (uint24tColor) {
+		// define masks and shift
+		const RED_MASK = 0xff0000;	const GREEN_MASK = 0x00ff00;	const BLUE_MASK = 0x0000ff;
+		const RED_SHIFT = 16;		const GREEN_SHIFT = 8;			const BLUE_SHIFT = 0;
+		return MathUtils.vector3((uint24tColor & RED_MASK) >> RED_SHIFT, (uint24tColor & GREEN_MASK) >> GREEN_SHIFT, (uint24tColor & BLUE_MASK) >> BLUE_SHIFT);
+	}
+
 	/**
 	 * @author Romualdo Villalobos
 	 * Convert uint24_t (8bits per channel) color to vector3 and performs linear interpolation between colorA and colorB,
@@ -246,14 +265,94 @@ export class MathUtils {
 	}
 
 	static vector3 (x, y, z) {
+		
 		return {
 			x: Number(x),
-			y: Number(y),
-			z: Number(z)
+			y: Number(y) || Number(x),
+			z: Number(z) || Number(x)
 		}
 	}
 
+	// RGB to HSV/HSL/HCY/HCL in HLSL http://www.chilliant.com/rgb2hsv.html
+	// the following code was written in HLSL by Ian Taylor 
+	// and translated to JavaScript by Romualdo Villalobos
+	// #region
+	static floatSaturate (x) {
+  		return Math.max(0, Math.min(1, x));
+	}
 
+	// same as hlsl saturate for float3: https://developer.download.nvidia.com/cg/saturate.html
+	static vector3Saturate (vector3) {
+		return {
+			x: MathUtils.floatSaturate(vector3.x),
+			y: MathUtils.floatSaturate(vector3.y),
+			z: MathUtils.floatSaturate(vector3.z),
+		}
+	}
+
+	// float3 RGBtoHCV(in float3 RGB)
+	static RGBtoHCV(vecRGB){
+		// Based on work by Sam Hocevar and Emil Persson
+
+		// float4 P = (vecRGB.g < vecRGB.b) ? float4(vecRGB.bg, -1.0, 2.0/3.0) : float4(vecRGB.gb, 0.0, -1.0/3.0);
+		const P = (vecRGB.y < vecRGB.z) ? { x: vecRGB.z, y: vecRGB.y, z: -1.0, w: 2.0/3.0 } : { x: vecRGB.y, y: vecRGB.z, z: 0.0, w: -1.0/3.0 };
+		
+		// float4 Q = (vecRGB.r < P.x) ? float4(P.xyw, vecRGB.r) : float4(vecRGB.r, P.yzx);
+		const Q = (vecRGB.x < P.x) ? { x: P.x, y: P.y, z: P.w, w: vecRGB.x } : { x: vecRGB.x, y: P.y, z: P.z, w: P.x };
+
+		// float C = Q.x - min(Q.w, Q.y);
+		const C = Q.x - Math.min(Q.w, Q.y);
+
+		// float H = abs((Q.w - Q.y) / (6 * C + Epsilon) + Q.z);
+		const H = Math.abs((Q.w - Q.y) / (6 * C + Math.EPSILON) + Q.z);
+
+		// return float3(H, C, Q.x);
+		return { x: H, y: C, z: Q.x };
+	}
+
+	// float3 RGBtoHSL(in float3 RGB)
+	static RGBtoHSL (vecRGB) {
+		// float3 HCV = RGBtoHCV(RGB);
+		const vecHCV = MathUtils.RGBtoHCV(vecRGB);
+
+		// float L = HCV.z - HCV.y * 0.5;
+		const L = vecHCV.z - vecHCV.y * 0.5;
+
+		// float S = HCV.y / (1 - abs(L * 2 - 1) + Epsilon);
+		const S = vecHCV.y / (1 - Math.abs(L * 2 - 1) + Number.EPSILON);
+
+		// return float3(HCV.x, S, L);
+		return { x: vecHCV.x, y: S, z: L};
+	}
+
+	// float3 HUEtoRGB(in float H) {
+	static HUEtoRGB(H) {
+		// float R = abs(H * 6 - 3) - 1;
+		const R = Math.abs(H * 6 - 3) - 1;
+
+		// float G = 2 - abs(H * 6 - 2);
+		const G = 2 - Math.abs(H * 6 - 2);
+
+		// float B = 2 - abs(H * 6 - 4);
+		const B = 2 - abs(H * 6 - 4);
+
+		// return saturate(float3(R,G,B));
+		return MathUtils.vector3Saturate({ x: R, y: G, z: B });
+	}
+
+	// float3 HSLtoRGB(in float3 HSL)
+	static HSLtoRGB(vecHSL) {
+		// float3 RGB = HUEtoRGB(HSL.x);
+		const vecRGB = MathUtils.HUEtoRGB(vecHSL.x);
+
+		// float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
+	  	const C = (1 - abs(2 * vecHSL.z - 1)) * vecHSL.y;
+
+	  	// return (vecRGB - 0.5) * C + vecHSL.z;
+	  	return MathUtils.vector3Add(MathUtils.vector3Scale(MathUtils.vector3Add(vecRGB, MathUtils.vector3(-0.5)), C), vecHSL.z);
+	}
+
+	// #endregion
 
 	static getDigitCount (number) {
 		return Math.max(Math.floor(Math.log10(Math.abs(number))), ZERO) + ONE;
@@ -520,5 +619,60 @@ export class MathUtils {
 
 		// Terminating decimal
 		return outpuObj;
+	}
+
+	static createListRandomIndexes (arena, numIndex, maxNumIndex) {
+		for (let i = 0; i < randomIdxArrays.length; i++) {
+			let currArr = randomIdxArrays[i];
+			if (currArr.seed === arena.Rng.seed && currArr.num === numIndex && currArr.maxNum === maxNumIndex) {
+				return currArr.array;
+			}
+		}
+
+		let indexes = [];
+		for (let i = 0; i < numIndex; i++) {
+			let newIdx = arena.Rng.range(ZERO, maxNumIndex);
+			if (indexes.length > ZERO) {
+				let fit = true;
+				for (let j = 0; j < indexes.length; j++) {
+					let currIdx = indexes[j];
+					if (newIdx === currIdx) {
+						fit = false;
+					}
+				}
+				if (fit) {
+					indexes.push(newIdx);
+				} else {
+					while (!fit) {
+						newIdx = arena.Rng.range(ZERO, maxNumIndex);
+						let currFit = true;
+						for (let j = 0; j < indexes.length; j++) {
+							let currIdx = indexes[j];
+							if (newIdx === currIdx) {
+								currFit = false;
+							}
+						}
+						fit = currFit;
+						if (fit) {
+							indexes.push(newIdx);
+						}
+					}
+				}
+			} else {
+				indexes.push(newIdx);
+			}
+		}
+		let newArrObj = {
+			seed: arena.Rng.seed,
+			num: numIndex,
+			maxNum: maxNumIndex,
+			array: indexes
+		};
+		randomIdxArrays.push(newArrObj);
+		return indexes;
+	}
+
+	static getRandomArbitrary (min, max) {
+		return Math.random() * (max - min) + min;
 	}
 }
