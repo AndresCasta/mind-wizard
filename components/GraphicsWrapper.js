@@ -77,6 +77,29 @@ export class GraphicsWrapper extends MindPixiGraphics {
 		return currGraphicsData[key];
 	}
 
+	scaleGraphic (scaleX = undefined, scaleY = undefined) {
+		const ZERO = 0;
+		if (this.graphicsData.length > ZERO) {
+			for (let i = 0; i < this.graphicsData.length; i++) {
+				const graphData = this.graphicsData[i];				
+				const points = graphData.shape.points;
+				// moves graphic points to origin and applies the button scale.
+				for (let i = 0; i < points.length; i++) {
+					if ((i & ONE) === 1) { // odd (y component)
+						if (typeof scaleY === 'undefined') continue;
+						const y = points[i];
+						points[i] = y * scaleY;
+					} else { // even (x component)
+						if (typeof scaleX === 'undefined') continue;
+						const x = points[i];
+						points[i] = x * scaleX;
+					}
+				}
+			}
+		}
+		// points is an array in the following format: [x1, y1, x2, y2, x3, y3]
+	}
+
 	ExtractStyle (key) {
 		let styleObj = this.arena.theme.getStyles(key);
 		let currStyle = styleObj ? styleObj[styleObj.styleToUse] : styles;
