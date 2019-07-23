@@ -1,5 +1,7 @@
 import { MixinThemable } from './MixinThemable';
 import { MindPixiGraphics } from 'mind-sdk/mindPixi/MindPixiGraphics';
+import { ThemableSprite } from './ThemableSprite';
+import { MindTextureManager } from 'mind-sdk/MindTextureManager';
 
 export class ThemableGraphic extends MixinThemable(MindPixiGraphics) {
 	constructor (...args) {
@@ -77,6 +79,57 @@ export class ThemableGraphic extends MixinThemable(MindPixiGraphics) {
 			}
 		}
 		// points is an array in the following format: [x1, y1, x2, y2, x3, y3]
+	}
+
+	convertToSprite () {
+		let newSprite = new ThemableSprite(undefined);
+		let defaultCopy = new MindPixiGraphics();
+		let tactileCopy = new MindPixiGraphics();
+
+		let styleObj = this.arena.theme.getStyles(this._styleName);
+		let defaultStyle = styleObj['default'];
+		let tactileStyle = styleObj['tactile'];
+
+		defaultCopy.beginFill(defaultStyle.fillColor, defaultStyle.fillAlpha);
+		defaultCopy.lineStyle(defaultStyle.lineWidth, defaultStyle.lineColor, defaultStyle.lineAlpha);
+
+		tactileCopy.beginFill(tactileStyle.fillColor, tactileStyle.fillAlpha);
+		tactileCopy.lineStyle(tactileStyle.lineWidth, tactileStyle.lineColor, tactileStyle.lineAlpha);
+
+		const TEXTURE_RES = 2;
+
+		for (let i = 0; i < this.graphicsData.length; i++) {
+			let currGraphicsData = this.graphicsData[i];
+			defaultCopy.drawShape(currGraphicsData.shape);
+			tactileCopy.drawShape(currGraphicsData.shape);
+		}
+
+		let defaultTextureId = 'defaultGraph' + JSON.stringify(defaultCopy.graphicsData);
+		let defaultTexture = MindTextureManager.getTexture(defaultTextureId);
+
+		if (!defaultTexture) {
+			defaultTexture = MindTextureManager.generateTextureFromDisplayObject(defaultCopy, undefined, undefined, TEXTURE_RES, true);
+			MindTextureManager.saveTexture(defaultTextureId, defaultTexture);
+		}
+
+		let tactileTextureId = 'tactileGraph' + JSON.stringify(tactileCopy.graphicsData);
+		let tactileTexture = MindTextureManager.getTexture(tactileTextureId);
+
+		if (!tactileTexture) {
+			tactileTexture = MindTextureManager.generateTextureFromDisplayObject(tactileCopy, undefined, undefined, TEXTURE_RES, true);
+			MindTextureManager.saveTexture(tactileTextureId, tactileTexture);
+		}
+
+		newSprite.themeOptions = {
+			default: {
+				texture: defaultTexture
+			},
+			tactile: {
+				texture: tactileTexture
+			}
+		};
+
+		return newSprite;
 	}
 
 	updateGraphic () {
