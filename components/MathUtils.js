@@ -2,10 +2,13 @@ const DEG_180 = 180;
 const ZERO = 0;
 const ONE = 1;
 const TWO = 2;
+const THREE = 3;
+const FOUR = 4;
 const FIVE = 5;
 const SIX = 6;
 const HEX = 16;
 const TEN = 10;
+const DIV_2 = 0.5;
 
 var randomIdxArrays = [];
 
@@ -248,7 +251,7 @@ export class MathUtils {
 
 		const colorAvec = MathUtils.vector3((color & RED_MASK) >> RED_SHIFT, (color & GREEN_MASK) >> GREEN_SHIFT, (color & BLUE_MASK) >> BLUE_SHIFT);
 
-		const newColor = MathUtils.vector3Scale(colorAvec, brightness)//Mix(t, colorAvec, colorBvec);
+		const newColor = MathUtils.vector3Scale(colorAvec, brightness);// Mix(t, colorAvec, colorBvec);
 
 		let rInt8 = Number.parseInt(newColor.x);
 		let gInt8 = Number.parseInt(newColor.y);
@@ -261,24 +264,23 @@ export class MathUtils {
 		return {
 			x: Number(x),
 			y: Number(y)
-		}
+		};
 	}
 
 	static vector3 (x, y, z) {
-		
 		return {
 			x: Number(x),
 			y: Number(y) || Number(x),
 			z: Number(z) || Number(x)
-		}
+		};
 	}
 
 	// RGB to HSV/HSL/HCY/HCL in HLSL http://www.chilliant.com/rgb2hsv.html
-	// the following code was written in HLSL by Ian Taylor 
+	// the following code was written in HLSL by Ian Taylor
 	// and translated to JavaScript by Romualdo Villalobos
 	// #region
 	static floatSaturate (x) {
-  		return Math.max(0, Math.min(1, x));
+		return Math.max(ZERO, Math.min(ONE, x));
 	}
 
 	// same as hlsl saturate for float3: https://developer.download.nvidia.com/cg/saturate.html
@@ -286,17 +288,17 @@ export class MathUtils {
 		return {
 			x: MathUtils.floatSaturate(vector3.x),
 			y: MathUtils.floatSaturate(vector3.y),
-			z: MathUtils.floatSaturate(vector3.z),
-		}
+			z: MathUtils.floatSaturate(vector3.z)
+		};
 	}
 
 	// float3 RGBtoHCV(in float3 RGB)
-	static RGBtoHCV(vecRGB){
+	static RGBtoHCV (vecRGB) {
 		// Based on work by Sam Hocevar and Emil Persson
 
 		// float4 P = (vecRGB.g < vecRGB.b) ? float4(vecRGB.bg, -1.0, 2.0/3.0) : float4(vecRGB.gb, 0.0, -1.0/3.0);
-		const P = (vecRGB.y < vecRGB.z) ? { x: vecRGB.z, y: vecRGB.y, z: -1.0, w: 2.0/3.0 } : { x: vecRGB.y, y: vecRGB.z, z: 0.0, w: -1.0/3.0 };
-		
+		const P = (vecRGB.y < vecRGB.z) ? { x: vecRGB.z, y: vecRGB.y, z: -1.0, w: TWO / THREE } : { x: vecRGB.y, y: vecRGB.z, z: 0.0, w: -ONE / THREE };
+
 		// float4 Q = (vecRGB.r < P.x) ? float4(P.xyw, vecRGB.r) : float4(vecRGB.r, P.yzx);
 		const Q = (vecRGB.x < P.x) ? { x: P.x, y: P.y, z: P.w, w: vecRGB.x } : { x: vecRGB.x, y: P.y, z: P.z, w: P.x };
 
@@ -304,7 +306,7 @@ export class MathUtils {
 		const C = Q.x - Math.min(Q.w, Q.y);
 
 		// float H = abs((Q.w - Q.y) / (6 * C + Epsilon) + Q.z);
-		const H = Math.abs((Q.w - Q.y) / (6 * C + Math.EPSILON) + Q.z);
+		const H = Math.abs((Q.w - Q.y) / (SIX * C + Math.EPSILON) + Q.z);
 
 		// return float3(H, C, Q.x);
 		return { x: H, y: C, z: Q.x };
@@ -316,40 +318,40 @@ export class MathUtils {
 		const vecHCV = MathUtils.RGBtoHCV(vecRGB);
 
 		// float L = HCV.z - HCV.y * 0.5;
-		const L = vecHCV.z - vecHCV.y * 0.5;
+		const L = vecHCV.z - vecHCV.y * DIV_2;
 
 		// float S = HCV.y / (1 - abs(L * 2 - 1) + Epsilon);
-		const S = vecHCV.y / (1 - Math.abs(L * 2 - 1) + Number.EPSILON);
+		const S = vecHCV.y / (ONE - Math.abs(L * TWO - ONE) + Number.EPSILON);
 
 		// return float3(HCV.x, S, L);
-		return { x: vecHCV.x, y: S, z: L};
+		return { x: vecHCV.x, y: S, z: L };
 	}
 
 	// float3 HUEtoRGB(in float H) {
-	static HUEtoRGB(H) {
+	static HUEtoRGB (H) {
 		// float R = abs(H * 6 - 3) - 1;
-		const R = Math.abs(H * 6 - 3) - 1;
+		const R = Math.abs(H * SIX - THREE) - ONE;
 
 		// float G = 2 - abs(H * 6 - 2);
-		const G = 2 - Math.abs(H * 6 - 2);
+		const G = TWO - Math.abs(H * SIX - TWO);
 
 		// float B = 2 - abs(H * 6 - 4);
-		const B = 2 - abs(H * 6 - 4);
+		const B = TWO - Math.abs(H * SIX - FOUR);
 
 		// return saturate(float3(R,G,B));
 		return MathUtils.vector3Saturate({ x: R, y: G, z: B });
 	}
 
 	// float3 HSLtoRGB(in float3 HSL)
-	static HSLtoRGB(vecHSL) {
+	static HSLtoRGB (vecHSL) {
 		// float3 RGB = HUEtoRGB(HSL.x);
 		const vecRGB = MathUtils.HUEtoRGB(vecHSL.x);
 
 		// float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
-	  	const C = (1 - abs(2 * vecHSL.z - 1)) * vecHSL.y;
+		const C = (ONE - Math.abs(TWO * vecHSL.z - ONE)) * vecHSL.y;
 
-	  	// return (vecRGB - 0.5) * C + vecHSL.z;
-	  	return MathUtils.vector3Add(MathUtils.vector3Scale(MathUtils.vector3Add(vecRGB, MathUtils.vector3(-0.5)), C), vecHSL.z);
+		// return (vecRGB - 0.5) * C + vecHSL.z;
+		return MathUtils.vector3Add(MathUtils.vector3Scale(MathUtils.vector3Add(vecRGB, MathUtils.vector3(-DIV_2)), C), vecHSL.z);
 	}
 
 	// #endregion
