@@ -9,7 +9,8 @@ import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
 
 import { GraphicsWrapper } from './GraphicsWrapper';
-import { ThemableSprite } from './ThemableSprite';
+import { ThemableSprite } from './Themable/ThemableSprite';
+import { ThemableGraphic } from './Themable/ThemableGraphic';
 
 import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
@@ -712,20 +713,70 @@ export function renderDotsOnBezierPath (coordinateSpace, quantity, bezierSetting
 }
 
 export function createPlatform (width, height, theme) {
-	let _platformStyle = extractStyleStatic(theme, 'platform');
+	let _platformStyle = theme.getStyles('platform');
+	let _defaultStyle = _platformStyle['default'];
+	let _tactileStyle = _platformStyle['tactile'];
+	const TWO = 2;
 
-	let boxGradientProperties = {
+	let defaultGradientProperties = {
 		type: 'linear',
 		w: width, //     [Linear/Radial: ending radius of gradient]
 		h: height, //     [Linear/Radial: ending radius of gradient]
-		x0: width / NUMBERS.TWO,  //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
-		y0: 0,  //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
-		x1: width / NUMBERS.TWO,
+		x0: width / TWO, //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+		y0: 0, //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+		x1: width / TWO,
 		y1: height,
-		colorStops: _platformStyle.colors
+		colorStops: _defaultStyle.colors
 	};
 
-	let platform = drawGradientRect(width, height, boxGradientProperties, _platformStyle.linewidth, _platformStyle.stroke);
+	let tactileGradientProperties = {
+		type: 'linear',
+		w: width, //     [Linear/Radial: ending radius of gradient]
+		h: height, //     [Linear/Radial: ending radius of gradient]
+		x0: width / TWO, //   [Linear/Radial: starting x point of gradient line (direction of gradient, not position of object)]
+		y0: 0, //   [Linear/Radial: starting y point of gradient line (direction of gradient, not position of object)]
+		x1: width / TWO,
+		y1: height,
+		colorStops: _tactileStyle.colors
+	};
+
+	let platform = new MindPixiContainer();
+	const POSITION_ZERO = 0;
+
+	// we will grab the texture from this container.
+
+	let defGradGenerator = new MindGradient(defaultGradientProperties);
+	let defGradientTexture = defGradGenerator.Texture();
+
+	let tactileGradGenerator = new MindGradient(tactileGradientProperties);
+	let tactileGradientTexture = tactileGradGenerator.Texture();
+
+	let gradientSprite = new ThemableSprite(undefined);
+	gradientSprite.themeOptions = {
+		default: {
+			texture: defGradientTexture
+		},
+		tactile: {
+			texture: tactileGradientTexture
+		}
+	};
+
+	// now draw stroke
+	let graphics = new ThemableGraphic();
+	graphics.lineStyle(_defaultStyle.lineWidth, _defaultStyle.lineColor, _defaultStyle.lineAlpha);
+	graphics.drawRect(POSITION_ZERO, POSITION_ZERO, gradientSprite.width, gradientSprite.height);
+	graphics.endFill();
+	graphics.styleName = 'platform';
+
+	// add both the gradient and the stroke into the container.
+	// if you want to add the stroke on top, addChild it after.
+	platform.addChild(gradientSprite);
+	platform.addChild(graphics);
+	// strokes are not considered in bounds calculations so we must calculate it ourselves.
+
+	platform.gradientSprite = gradientSprite;
+	platform.border = graphics;
+
 	return platform;
 }
 
