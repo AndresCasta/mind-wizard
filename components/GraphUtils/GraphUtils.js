@@ -907,15 +907,21 @@ export const platform = {
 	'styleToUse': 'default',
 	'default': {
 		'colors': COLOR.PLATFORM_GRADIENT,
-		'stroke': COLOR.FILL_ORANGE_STROKE,
-		'linewidth': 2 // STROKE.STROKE_BOLD
+		fillAlpha: 0,
+		fillColor: COLOR.WHITE,
+		lineAlpha: 1,
+		lineColor: COLOR.FILL_ORANGE_STROKE,
+		lineWidth: 1.5
 	},
 	'tactile': {
 		'colors': COLOR.COIN_METAL_GRADIENT, // [COLOR.BLACK, COLOR.BLACK],
-		'stroke': COLOR.BLACK,
-		'linewidth': 2 // STROKE.STROKE_BOLD
+		fillAlpha: 0,
+		fillColor: COLOR.WHITE,
+		lineAlpha: 1,
+		lineColor: COLOR.BLACK,
+		lineWidth: 1.5
 	}
-}
+};
 
 /**
  * Add this to the theme if you nedd draw a minus block
