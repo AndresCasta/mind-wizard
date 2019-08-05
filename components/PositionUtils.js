@@ -1,6 +1,15 @@
 import { COMMON_NUMBERS } from '../Constants';
 
-export function positionateObjects (centePosition, objects, gap, coordinateSpace = this, alignment = { x: 0.5, y: 0.5 }) {
+/**
+ * 
+ * @param {*} centePosition 
+ * @param {*} objects 
+ * @param {*} gap 
+ * @param {*} coordinateSpace 
+ * @param {*} alignment 
+ */
+export function positionateObjects (centePosition, objects, gap, coordinateSpace = this) {
+    let alignment = { x: 0.5, y: 0.5 };
     let gaps = [];
     if (Array.isArray(gap)) {
         gaps = gap;
@@ -41,7 +50,7 @@ export function positionateObjects (centePosition, objects, gap, coordinateSpace
         let element = objects[i];
         let bounds = boundList[i];
         let pos = { x: initialX + acumulateWidth + bounds.width * alignment.x, y: centePosition.y };
-        let realPos = this.calculatePositionObject(element, pos, coordinateSpace, alignment);
+        let realPos = calculatePositionObject(element, pos, coordinateSpace, alignment);
         element.position = realPos;
         acumulateWidth += bounds.width;
         if (gaps[i]) {
@@ -50,6 +59,13 @@ export function positionateObjects (centePosition, objects, gap, coordinateSpace
     }
 }
 
+/**
+ * 
+ * @param {*} obj 
+ * @param {*} position 
+ * @param {*} coordinateSpace 
+ * @param {*} alignment 
+ */
 export function calculatePositionObject (obj, position, coordinateSpace = this, alignment = { x: 0.5, y: 0.5 }) {
     let localPoint = new LocalPoint(position.x, position.y, coordinateSpace);
     let alignObj = new AlignedObjectPositionalData(alignment.x, alignment.y);
@@ -58,16 +74,22 @@ export function calculatePositionObject (obj, position, coordinateSpace = this, 
     return { x: targetPosition.x, y: targetPosition.y };
 }
 
+/**
+ * 
+ * @param {*} obj 
+ * @param {*} anchor 
+ * @param {*} altPos 
+ */
 export function getObjectAnchorPos (obj, anchor = { x: 0.5, y: 0.5 }, altPos) {
     let currPos = obj.position;
     if (altPos) {
         currPos = altPos;
     }
-    let floraBounds = obj.getLocalBounds();
+    let objBounds = obj.getLocalBounds();
 
     let resultPos = {
-        x: currPos.x + floraBounds.left * obj.scale.x + floraBounds.width * anchor.x * obj.scale.x,
-        y: currPos.y + floraBounds.top * obj.scale.y + floraBounds.height * anchor.y * obj.scale.y
+        x: currPos.x + objBounds.left * obj.scale.x + objBounds.width * anchor.x * obj.scale.x,
+        y: currPos.y + objBounds.top * obj.scale.y + objBounds.height * anchor.y * obj.scale.y
     };
 
     return resultPos;
