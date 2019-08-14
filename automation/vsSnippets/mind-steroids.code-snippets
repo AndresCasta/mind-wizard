@@ -178,6 +178,93 @@
 			"import { styles as frickStyle } from 'mind-game-components/frick/Fricker';"
 		]
 	},
+	"TextInput": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { TextInput } from 'mind-game-components/text_input/TextInput';"
+		]
+	},
+	"TextInput style": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as textStyle } from 'mind-game-components/text_input/TextInput';",
+			"import { styles as KeypadButtonStyle } from 'mind-game-components/text_input/keypad/KeypadButton';"
+		]
+	},
+	"DragObject style": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as dragObjectStyle } from 'mind-game-components/dragManager/dragObjects/ResourceDragObjectWrapper';"
+		]
+	},
+
+	"Petals styles": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as floraStyles } from 'mind-game-components/petals/petalUtils/PetalConsts';"
+		]
+	},
+	"Petals": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { Petal } from 'mind-game-components/petals/units/Petal';",
+			"import { PetalColors, PetalStates } from 'mind-game-components/petals/petalUtils/PetalConsts';"
+		]
+	},
+	"Slider": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { DefaultTab } from 'mind-game-components/slider/sliderTab/tab/DefaultTab';",
+			"import { Slider } from 'mind-game-components/slider/Slider';",
+			"import { LinearSlider } from 'mind-game-components/slider/LinearSlider';"
+		]
+	},
+	"Slider DiscreteSSD": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { DiscreteSSD } from 'mind-game-components/slider/ssd/DiscreteSSD';"
+		]
+	},
+	"Slider DistributedSSD": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { DistributedSSD } from 'mind-game-components/slider/ssd/DistributedSSD';"
+		]
+	},
+	"Slider LinearSSD": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { LinearSSD } from 'mind-game-components/slider/ssd/LinearSSD';"
+		]
+	},
+	"Slider MultiplicativeSSD": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { MultiplicativeSSD } from 'mind-game-components/slider/ssd/MultiplicativeSSD';"
+		]
+	},
+	"Slider styles": {
+		"scope": "javascript",
+		"prefix": "import",
+		"body": [
+			"import { styles as defaultSliderTab } from 'mind-game-components/slider/sliderTab/BaseTabWrapper';",
+			"import { styles as defaultTrackStyle } from 'mind-game-components/slider/track/Track';",
+			"import { styles as defaultTabStyle } from 'mind-game-components/slider/sliderTab/tab/DefaultTab';",
+			"import { styles as blastPadTabStyle } from 'mind-game-components/slider/sliderTab/tab/BlastPadTab';",
+			"import { styles as glueBottleTabStyle } from 'mind-game-components/slider/sliderTab/tab/GlueBottleTab';",
+			"import { styles as customTabStyle } from 'mind-game-components/slider/sliderTab/tab/CustomTab';"
+		]
+	},
 	"Point object": {
 		"scope": "javascript",
 		"prefix": "point",
