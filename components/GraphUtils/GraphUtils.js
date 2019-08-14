@@ -7,12 +7,8 @@ import { MindTextureManager } from 'mind-sdk/MindTextureManager';
 import { checkLineIntersection } from 'mind-game-components/utils/MathLib';
 import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
-
-import { GraphicsWrapper } from './GraphicsWrapper';
 import { ThemableSprite } from './Themable/ThemableSprite';
 import { ThemableGraphic } from './Themable/ThemableGraphic';
-
-import { STROKE, COLOR, COMMON_NUMBERS } from '../Constants';
 
 const NO_ALPHA = 1;
 const BLACK = 0x000000;
@@ -780,110 +776,13 @@ export function createPlatform (width, height, theme) {
 	return platform;
 }
 
-function extractStyleStatic (theme, name) {
+export function extractStyleStatic (theme, name) {
 	let styleObj = theme.getStyles(name);
 	let styleToUse = styleObj.styleToUse;
 	// let styleToUse = 'tactile';
 
 	let style = styleObj.hasOwnProperty(styleToUse) ? styleObj[styleToUse] : styleObj['default'];
 	return style;
-}
-
-/**
- * convert a GraphicWrapper object to a ThemableSprite
- * @param {*} graphWrapper
- */
-export function exportToThemableSprite (graphWrapper) {
-	let _arena = graphWrapper.arena;
-	let defaultCopy = new GraphicsWrapper(graphWrapper.styleId);
-	let tactileCopy = new GraphicsWrapper(graphWrapper.styleId);
-	defaultCopy.initDrawing();
-	tactileCopy.initDrawing();
-
-	const TEXTURE_RES = 2;
-
-	for (let i = 0; i < graphWrapper.graphicsData.length; i++) {
-		let currGraphicsData = graphWrapper.graphicsData[i];
-		defaultCopy.drawShape(currGraphicsData.shape);
-		tactileCopy.drawShape(currGraphicsData.shape);
-	}
-
-	let newSprite = new ThemableSprite(undefined);
-	let styleObj = _arena.theme.getStyles(graphWrapper.styleId);
-
-	let defaultStyle = styleObj['default'];
-	for (let i = 0; i < defaultCopy.graphicsData.length; i++) {
-		let currGraphicsData = defaultCopy.graphicsData[i];
-		if (defaultCopy.updateFillAlpha) {
-			currGraphicsData.fillAlpha = defaultStyle.fillAlpha;
-		}
-		if (defaultCopy.updateFillColor) {
-			currGraphicsData.fillColor = defaultStyle.fillColor;
-		}
-		if (defaultCopy.updateLineAlpha) {
-			currGraphicsData.lineAlpha = defaultStyle.lineAlpha;
-		}
-		if (defaultCopy.updateLineColor) {
-			currGraphicsData.lineColor = defaultStyle.lineColor;
-		}
-		if (defaultCopy.updateLineWidth) {
-			currGraphicsData.lineWidth = defaultStyle.lineWidth;
-		}
-	}
-	defaultCopy.updateGraphic();
-
-	let defaultTextureId = 'defaultGraph' + JSON.stringify(defaultCopy.graphicsData);
-	let defaultTexture = MindTextureManager.getTexture(defaultTextureId);
-
-	if (!defaultTexture) {
-		defaultTexture = MindTextureManager.generateTextureFromDisplayObject(defaultCopy, undefined, undefined, TEXTURE_RES, true);
-		MindTextureManager.saveTexture(defaultTextureId, defaultTexture);
-	}
-
-	let tactileStyle = styleObj['tactile'];
-	for (let i = 0; i < tactileCopy.graphicsData.length; i++) {
-		let currGraphicsData = tactileCopy.graphicsData[i];
-		if (tactileCopy.updateFillAlpha) {
-			currGraphicsData.fillAlpha = tactileStyle.fillAlpha;
-		}
-		if (tactileCopy.updateFillColor) {
-			currGraphicsData.fillColor = tactileStyle.fillColor;
-		}
-		if (tactileCopy.updateLineAlpha) {
-			currGraphicsData.lineAlpha = tactileStyle.lineAlpha;
-		}
-		if (tactileCopy.updateLineColor) {
-			currGraphicsData.lineColor = tactileStyle.lineColor;
-		}
-		if (tactileCopy.updateLineWidth) {
-			currGraphicsData.lineWidth = tactileStyle.lineWidth;
-		}
-	}
-	tactileCopy.updateGraphic();
-
-	let tactileTextureId = 'tactileGraph' + JSON.stringify(tactileCopy.graphicsData);
-	let tactileTexture = MindTextureManager.getTexture(tactileTextureId);
-
-	if (!tactileTexture) {
-		tactileTexture = MindTextureManager.generateTextureFromDisplayObject(tactileCopy, undefined, undefined, TEXTURE_RES, true);
-		MindTextureManager.saveTexture(tactileTextureId, tactileTexture);
-	}
-
-	newSprite.themeOptions = {
-		default: {
-			texture: defaultTexture
-		},
-		tactile: {
-			texture: tactileTexture
-		}
-	};
-
-	newSprite.position = graphWrapper.position;
-
-	defaultCopy.destroy({ children: true, texture: false, baseTexture: false });
-	tactileCopy.destroy({ children: true, texture: false, baseTexture: false });
-
-	return newSprite;
 }
 
 export function exportGraphicToSprite (graphic) {

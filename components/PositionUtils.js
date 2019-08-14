@@ -1,3 +1,7 @@
+import { LocalPoint } from 'mind-game-components/utils/LocalPoint';
+import { AlignedObjectPositionalData } from 'mind-game-components/utils/AlignedObjectPositionalData';
+
+
 import { COMMON_NUMBERS } from '../Constants';
 
 /**
