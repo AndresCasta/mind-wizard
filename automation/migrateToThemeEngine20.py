@@ -2,7 +2,7 @@
 import os
 import re
 
-gameName = "OperationRace"
+gameName = "BirdExpressions"
 targetSdkVersion = "0.7.0.1"
 targetComponentVersion = "0.7.0"
 
@@ -209,7 +209,7 @@ def processStyleImport (rawLine):
     if (isComma(importedSymbols)):
         symbolName = extractFromMultipleImportedSymbols(importedSymbols)
         if (symbolName):
-            return rawLine.replace(lineCharacters, re.sub(r",.*as\s*" + symbolName, "", lineCharacters) + " // commented (" + symbolName + ")")
+            return rawLine.replace(lineCharacters, re.sub(r",.*as\s*" + symbolName, "", lineCharacters) + " // commented ( styles as " + symbolName + ")")
         else:
             return rawLine
 
