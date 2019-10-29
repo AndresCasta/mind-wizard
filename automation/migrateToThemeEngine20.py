@@ -2,15 +2,24 @@
 import os
 import re
 
-gameName = "BirdExpressions"
+# ====================================================================================================================================
+# MAIN SETTINGS
+gameName = "FractionOfSet"
 targetSdkVersion = "0.7.0.1"
 targetComponentVersion = "0.7.0"
 
+# ====================================================================================================================================
+# OTHER SETTINGS
+shouldProcessThemeFile = True  # experimental feature, could make you loss your progress if you've already started migration, use it only if you know what you are doing
+ignoreAllAssetSuffixes = True   # set the flag 'ignoreAssetsSuffix': true, to each resource with url property
+
+# ====================================================================================================================================
+# APPLICATION PATHS
 configFileUrl = "config.js"
 packageFileUrl = "package.json"
 gameFileUrl = "PixiArenas/" + gameName + "/" + gameName + ".js"
 gameJsonFileUrl = "PixiArenas/" + gameName + "/" + gameName + ".json"
-gameThemeFileUrl = "PixiArenas" + gameName + "/" + gameName + "Theme.js"
+gameThemeFileUrl = "PixiArenas/" + gameName + "/" + gameName + "Theme.js"
 
 # Config file related
 #region
@@ -107,7 +116,7 @@ def processPackageLine (rawLine):
 #endregion
 
 # Process game json file:
-#region
+#regionignoreAllAssetSuffixes
 def processGameJsonFile ():
     tmpFileUrl = ".tmp." + gameName + ".json"
     fileWrite = open(tmpFileUrl, "w+")
@@ -209,7 +218,7 @@ def processStyleImport (rawLine):
     if (isComma(importedSymbols)):
         symbolName = extractFromMultipleImportedSymbols(importedSymbols)
         if (symbolName):
-            return rawLine.replace(lineCharacters, re.sub(r",.*as\s*" + symbolName, "", lineCharacters) + " // commented ( styles as " + symbolName + ")")
+            return rawLine.replace(lineCharacters, re.sub(r",.*as\s*" + symbolName, "", lineCharacters) + " // commented (styles as " + symbolName + ")")
         else:
             return rawLine
 
@@ -293,6 +302,44 @@ def isAsKeyword (lineStr):
 
 #endregion
 
+# Theme file related
+#region
+
+def processThemeFile ():
+    tmpFileUrl = ".tmp." + gameName + "Theme.js"
+    fileWrite = open(tmpFileUrl, "w+")
+    fileRead = open(gameThemeFileUrl, "r")
+    fileLines = fileRead.readlines()
+    # fileWrite.write("// using themeEngine 2.0\n")
+    for line in fileLines:
+        fileWrite.write(processThemeFileLine(line))
+
+    fileRead.close()
+    fileWrite.close()
+    
+    print("- [EXPERMIENTAL] File .tmp." + gameName + "Theme.js generated automatically, please use as reference and delete before uploading to Global Content repo")
+
+def processThemeFileLine (rawLine):
+    outLine = rawLine
+    
+    if isUrlLine(rawLine) and ignoreAllAssetSuffixes:
+        outLine = re.sub(r"\s*\'url\':\s*\'.*", rawLine + "\t\t\'ignoreAssetsSuffix\': true,", rawLine)
+    elif isUrlWithoutQuotation(rawLine):
+        outLine = re.sub(r"\s*url:.*", rawLine + "\t\tignoreAssetsSuffix: true,", rawLine)
+
+    return outLine
+
+def isUrlLine (lineStr):
+    regex = r"\'url\': \'.*"
+    return re.search(regex, lineStr)
+
+def isUrlWithoutQuotation (lineStr):
+    regex = r"url: .*"
+    return re.search(regex, lineStr)
+
+
+#endregion
+
 # Utils
 #region
 def rewriteFilesContent (fromFileUrl, toFileUrl, deleteFrom = True):
@@ -314,6 +361,8 @@ def main():
     processPackageFile()
     processGameJsonFile()
     processGameFile()
+    if shouldProcessThemeFile:
+        processThemeFile()
     print("\nWARNING: Please note that " + gameName + "Theme.js file won't be modified by this script, please check references and continue the migration manually")
 
 if __name__ == "__main__":
