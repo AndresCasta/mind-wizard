@@ -6,17 +6,19 @@
 import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';
 import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 
-const ADDITIONAL_Y_DISPLACEMENT_NEGATIVE_SIGN = -3; // some offset for move the negative sign upwards (since unicode character \u2012 is not at correct height by default)
 const ZERO = 0;
 const HALF = 0.5;
 const DEFAULT_GLOW_IN_TIME = 0.4;
 const DEFAULT_GLOW_OUT_TIME = 0.01;
 
+const LEADING_CHARACTERS = ['+', '-', '×']; // class will separate a number from a sign/leading character
+const LEADING_CHAR_Y_OFFSETS = [-1, -3, -3]; // some arbitrary offset to move the leading character sign
+
 /**
  * Space between possible sign and number magnitude
  * @type {number}
  */
-export const SPACING = 3;
+export const SPACING = 0;
 
 /**
  * Class used to create 'glowable' text and manage `MindPixiText` instances smoothly through composition,
@@ -76,6 +78,12 @@ export class GlowText extends MindPixiContainer {
         this._textMagnitude = '';
 
         /**
+         * Tracks if this text is representing a number with leadign sign/character
+         * @type {boolean}
+         */
+        this.isNumber = false;
+
+        /**
          * Reference to original font style passed by user at constructor
          * @type {object}
          */
@@ -85,7 +93,7 @@ export class GlowText extends MindPixiContainer {
          * Mind Pixi text that is showing defined text
          * @type {MindPixiText}
          */
-        this.mainTextLabel = new MindPixiText('', {fontSize: 43});
+        this.mainTextLabel = new MindPixiText('', style);
         
         /**
          * Possibly the MindPixiText that is showing sign for mainTextLabel
@@ -301,7 +309,16 @@ export class GlowText extends MindPixiContainer {
         // unknowFontSize   = originalFontSize * newWidth / this.width
         const scale = newWidth / this.width;
         this.fontSize = this.fontSize * scale;
-	}
+    }
+    
+    fitTextVertically (newHeight) {
+        // this is a proportion rule
+        // originalFontSize = this.height
+        // unknowFontSize   = newHeight
+        // unknowFontSize   = originalFontSize * newHeight / this.height
+        const scale = newHeight / this.height;
+        this.fontSize = this.fontSize * scale;
+    }
 
     calculateEmptySpace () {
 		const pText = this.mainTextLabel;
@@ -373,6 +390,11 @@ export class GlowText extends MindPixiContainer {
     }
 
     _updateChildrenPosition () {
+        if (!this.isNumber) {
+            this._setTextX(0);
+            return;
+        }
+
         if (!this.isSign) {
             this._setTextX(0);
             return;
@@ -392,10 +414,9 @@ export class GlowText extends MindPixiContainer {
         this._setSignX(signX);
 
         // calculate y position of sign
-        if (this.textSign === '+') {
-            this._setSignY(0);
-        } else if (this.textSign === '-') {
-            this._setSignY(ADDITIONAL_Y_DISPLACEMENT_NEGATIVE_SIGN);
+        for (let i = 0; i < LEADING_CHAR_Y_OFFSETS.length; i++) {
+            const yOffset = LEADING_CHAR_Y_OFFSETS[i];
+            this._setSignY(yOffset);
         }
     }
 
@@ -444,8 +465,45 @@ export class GlowText extends MindPixiContainer {
         if (this.whiteTextSignLabel) this.whiteTextSignLabel[attrName] = value;
     }
 
+    _checkNumber (string) {
+        // check if number ignoring leading character
+        for (let i = 0; i < LEADING_CHARACTERS.length; i++) {
+            const character = LEADING_CHARACTERS[i];
+            if (character === string[0]) {
+                const possiblyNumString = string.replace(character, '');
+                return !isNaN(possiblyNumString);
+            }
+        }
+
+        // check if number using standard isNaN function
+        return !isNaN(string)
+    }
+
+    _unpackSignAndTextMagnitude (textStr) {
+        // reset current sign string
+        this._textSign = '';
+        this._textMagnitude = '';
+
+        // Find the leading character
+        for (let i = 0; i < LEADING_CHARACTERS.length; i++) {
+            const character = LEADING_CHARACTERS[i];
+            const isLeadingCharacter = character === textStr[0];
+            if (isLeadingCharacter) {
+                this._textSign = character;
+                this._textMagnitude = textStr.replace(character, '');
+                break;
+            }
+        }
+
+        // current textStr doesn't have leading sign character
+        if (this._textMagnitude === '') this._textMagnitude = textStr;
+    }
+
     set fontSize (value) {
        this._setAttr('fontSize', value);
+
+       // redraw text (update positioning)
+       this.text = this._text;
     }
 
     get fontSize () {
@@ -458,38 +516,25 @@ export class GlowText extends MindPixiContainer {
         this._text = textStr;
 
         // value is a number?
-        const textNumber = Number(textStr);
-        const isNumber = !isNaN(textNumber);
-        
-        // assign text since special processing since value is not a number
+        const isNumber = this.isNumber = this._checkNumber(textStr);
+
+        // assign text without special processing since value is not a number
         if (!isNumber) {
             this._setText(textStr);
             this._destroySignLabels();
             this._updateChildrenPosition();
             this._textSign = '';
+            this._textMagnitude = '';
             return;
         }
 
-        // track sign of current string of a number
-        const isNegativeSign = this._text.indexOf('-') > -1;
-        const isPositiveSign = this._text.indexOf('+') > -1;
-        if (isNegativeSign) {
-			textStr = textStr.replace('-', '');
-            this._textSign = '-';
-        } else if (isPositiveSign) {
-            textStr = textStr.replace('+', '');
-            this._textSign = '+';
-        } else {
-            this._textSign = '';
-            this._destroySignLabels();
-        }
-
-        // track the numeric part
-        this._textMagnitude = textStr;
+        // unpack text sign and text magnitude of this text string representing a number
+        this._unpackSignAndTextMagnitude(textStr);
+        if (this._textSign === '') this._destroySignLabels();
 
         // original labels should be used only to show the magnitude of the num (not the sign)
-        this._setText(textStr);
-        this._setSignText(this.textSign);
+        this._setText(this._textMagnitude);
+        this._setSignText(this._textSign);
         this._updateChildrenPosition();
 	}
 
