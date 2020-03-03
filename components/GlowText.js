@@ -13,7 +13,7 @@ const DEFAULT_GLOW_IN_TIME = 0.4;
 const DEFAULT_GLOW_OUT_TIME = 0.01;
 
 export const LEADING_CHARACTERS = ['+', '-', '×']; // class will separate a number from a sign/leading character
-export const LEADING_CHAR_Y_OFFSETS = [-3, -3, -3]; // some arbitrary offset to move the leading character sign
+export const LEADING_CHAR_Y_OFFSETS = [-2, -3, -3]; // some arbitrary offset to move the leading character sign
 
 /**
  * Space between possible sign and number magnitude
@@ -437,12 +437,12 @@ export class GlowText extends MindPixiContainer {
 		this._setSignX(signX);
 
         // calculate y position of sign
-		if (!this._useSuperscript) {
-			const offsetIdx = LEADING_CHAR_Y_OFFSETS.indexOf(this.textSign);
+		if (this._useSuperscript) {
+			this._setSignY(0);
+        } else {
+			const offsetIdx = LEADING_CHARACTERS.indexOf(this.textSign);
 			const yOffset = offsetIdx < 0 ? 0 : LEADING_CHAR_Y_OFFSETS[offsetIdx];
 			this._setSignY(this._calcProportionalOffset(yOffset));
-		} else {
-			this._setSignY(0);
 		}
 	}
 
