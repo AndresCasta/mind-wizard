@@ -12,8 +12,8 @@ const HALF = 0.5;
 const DEFAULT_GLOW_IN_TIME = 0.4;
 const DEFAULT_GLOW_OUT_TIME = 0.01;
 
-const LEADING_CHARACTERS = ['+', '-', '×']; // class will separate a number from a sign/leading character
-const LEADING_CHAR_Y_OFFSETS = [-1, -3, -3]; // some arbitrary offset to move the leading character sign
+export const LEADING_CHARACTERS = ['+', '-', '×']; // class will separate a number from a sign/leading character
+export const LEADING_CHAR_Y_OFFSETS = [-3, -3, -3]; // some arbitrary offset to move the leading character sign
 
 /**
  * Space between possible sign and number magnitude
@@ -504,12 +504,12 @@ export class GlowText extends MindPixiContainer {
 			const character = LEADING_CHARACTERS[i];
 			if (character === string[0]) {
 				const possiblyNumString = string.replace(character, '');
-				return !isNaN(possiblyNumString);
+				return !isNaN(possiblyNumString) && string.length > 1;
 			}
 		}
 
         // check if number using standard isNaN function
-		return !isNaN(string);
+		return !isNaN(string) && string.length >= 1;
 	}
 
 	_unpackSignAndTextMagnitude (textStr) {
