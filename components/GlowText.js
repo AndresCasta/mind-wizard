@@ -55,7 +55,7 @@ export const SPACING = 0;
  */
 export class GlowText extends MindPixiContainer {
     constructor(text = undefined, style = {}) {
-        super(text, style);
+        super();
 
         /**
          * Text string that this display is showing
