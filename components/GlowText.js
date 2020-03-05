@@ -12,8 +12,8 @@ const HALF = 0.5;
 const DEFAULT_GLOW_IN_TIME = 0.4;
 const DEFAULT_GLOW_OUT_TIME = 0.01;
 
-export const LEADING_CHARACTERS = ['+', '-', '×']; // class will separate a number from a sign/leading character
-export const LEADING_CHAR_Y_OFFSETS = [-2, -3, -3]; // some arbitrary offset to move the leading character sign
+const LEADING_CHARACTERS = 	['+', '-', '×']; // class will separate a number from a sign/leading character
+const LEADING_CHAR_Y_OFFSETS = [-1, -3, -3]; // some arbitrary offset to move the leading character sign
 
 /**
  * Space between possible sign and number magnitude
@@ -532,10 +532,16 @@ export class GlowText extends MindPixiContainer {
 		if (this._textMagnitude === '') this._textMagnitude = textStr;
 	}
 
+	clone (parent) {
+		const text = new GlowText(this.text, this.mainStyle);
+		if (parent) parent.addChild(text);
+		return text;
+	}
+
 	set fontSize (value) {
 		this._setAttr('fontSize', value);
 
-       // redraw text (update positioning)
+       	// redraw text (update positioning)
 		this.text = this._text;
 	}
 
@@ -593,7 +599,7 @@ export class GlowText extends MindPixiContainer {
 	}
 
 	get style () {
-		return this.originalStyle;
+		return this.mainTextLabel.style;
 	}
 
 	get mainStyle () {
