@@ -594,7 +594,7 @@ export class GlowText extends MindPixiContainer {
 	}
 
 	set style (value) {
-		this.originalStyle = value;
+		this.originalStyle = Object.assign({}, value);
 		this.updateStyles();
 	}
 
