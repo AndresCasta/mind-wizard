@@ -92,6 +92,12 @@ export class GlowText extends MindPixiContainer {
          */
 		this._useSuperscript = false;
 
+		/**
+		 * Tracks the y offset of the leading/sign character
+		 * @type {number}
+		 */
+		this._ySignOffset = 0;
+
         /**
          * Reference to original font style passed by user at constructor
          * @type {object}
@@ -413,6 +419,8 @@ export class GlowText extends MindPixiContainer {
 	}
 
 	_updateChildrenPosition () {
+		this._ySignOffset = 0;
+
 		if (!this.isNumber) {
 			this._setTextX(0);
 			return;
@@ -439,10 +447,13 @@ export class GlowText extends MindPixiContainer {
         // calculate y position of sign
 		if (this._useSuperscript) {
 			this._setSignY(0);
+			this._ySignOffset = 0;
         } else {
 			const offsetIdx = LEADING_CHARACTERS.indexOf(this.textSign);
 			const yOffset = offsetIdx < 0 ? 0 : LEADING_CHAR_Y_OFFSETS[offsetIdx];
-			this._setSignY(this._calcProportionalOffset(yOffset));
+			const finalY = this._calcProportionalOffset(yOffset);
+			this._ySignOffset = finalY;
+			this._setSignY(finalY);
 		}
 	}
 
@@ -593,6 +604,20 @@ export class GlowText extends MindPixiContainer {
 		return this.textSign !== '';
 	}
 
+	set useSuperscript (value) {
+		this._useSuperscript = value;
+		this.updateStyles();
+		this._updateChildrenPosition();
+	}
+
+	get useSuperscript () {
+		return this._useSuperscript;
+	}
+
+	get ySignOffset () {
+		return this._ySignOffset;
+	}
+
 	set style (value) {
 		this.originalStyle = Object.assign({}, value);
 		this.updateStyles();
@@ -648,16 +673,6 @@ export class GlowText extends MindPixiContainer {
 	get white () {
 		const colorPalette = this.arena.theme.getStyles('colorPalette');
 		return colorPalette.raw.colors.WHITE;
-	}
-
-	set useSuperscript (value) {
-		this._useSuperscript = value;
-		this.updateStyles();
-		this._updateChildrenPosition();
-	}
-
-	get useSuperscript () {
-		return this._useSuperscript;
 	}
 
 	static extractStyleStatic (theme, styleLocation) {
