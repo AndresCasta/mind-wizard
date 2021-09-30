@@ -10,9 +10,19 @@ const ZERO = 0;
 const ONE = 1;
 const DEFAULT_TIME = 1;
 
+/**
+ * Extends the Mind Wrapper for PIXI v4 AnimatedSprite class but adds support to
+ * playback and updating using the main feedback timeline exposed by Mind SDK.
+ *
+ * @export
+ * @class AnimatedSprite
+ * @extends {MindPixiAnimatedSprite}
+ */
 export class AnimatedSprite extends MindPixiAnimatedSprite {
 	/**
-     * @param {PIXI.Texture[]|PIXI.AnimatedSprite.FrameObject[]} textures - An array of {@link PIXI.Texture} or frame
+	 * Creates an AnimatedSprite object.
+	 *
+     * @param {PIXI.Texture[]|PIXI.AnimatedSprite.FrameObject[]} texturesArr - An array of {@link PIXI.Texture} or frame
      *  objects that make up the animation.
      */
 	constructor (texturesArr) {
@@ -37,10 +47,6 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 		 * @type {boolen}
 		 */
 		this.finalFrameIsFirst = false;
-
-		this._onThemeChange();
-		// it won't be registered here, since an exception is occuring in arena, this will be add at  the invocation list on MainView instead
-		// this.eventEmitter.on(this.mindEvents.EVENT_THEME_CHANGED, this._onThemeChange, this);
 	}
 
 	/**
@@ -128,20 +134,6 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 		this._notSupported();
 	}
 
-	_onThemeChange () {
-		const glowableSettings = this.extractStyleStatic(this.arena.theme, 'glowableSettings');
-		const currentTint = glowableSettings.glowableSprite.tint;
-
-		this.tint = currentTint;
-	}
-
-	extractStyleStatic (theme, name) {
-		let styleObj = theme.getStyles(name);
-		let styleToUse = styleObj.styleToUse;
-		let style = styleObj.hasOwnProperty(styleToUse) ? styleObj[styleToUse] : styleObj['default'];
-		return style;
-	}
-
 	/**
 	  * A short hand way of creating a movieclip from the singleton resources object
 	  *
@@ -152,9 +144,9 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 	  * @param {number} majorIndex total of frames less one
 	  * @param {Resources} resources the resources object
 	  * @param {boolean} isPingPong specify if this is a ping pong animation
-	  * @returns {AnimatedSprite}
+	  * @returns {AnimatedSprite} An animated sprite object
 	  */
-	static fromResources (frameNameTemplate, minFrame, maxFrame, majorIndex, resources, isPingPong) {		// references to created sprites
+	static fromResources (frameNameTemplate, minFrame, maxFrame, majorIndex, resources, isPingPong) {
 		const textureArr = [];
 		for (let i = 0; i < majorIndex; i++) {
 			const isInRange = (i >= minFrame) && (i <= maxFrame);
@@ -179,29 +171,3 @@ export class AnimatedSprite extends MindPixiAnimatedSprite {
 		return new AnimatedSprite(textureArr);
 	}
 }
-
-export const styles = {
-	'styleToUse': 'default',
-	'default': {
-		'glowableText': {
-			'colorStyleName': 'colorStyle',
-			'redStyleName': 'redStyle',
-			'alpha': 1
-		},
-		'glowableSprite': {
-			'tint': -1, // white
-			'alpha': 1
-		}
-	},
-	'tactile': {
-		'glowableText': {
-			'colorStyleName': 'colorStyleHC',
-			'redStyleName': 'redStyleHC',
-			'alpha': 0.5
-		},
-		'glowableSprite': {
-			'tint': 0, // black
-			'alpha': 0.5
-		}
-	}
-};
