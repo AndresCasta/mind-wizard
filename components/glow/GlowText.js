@@ -1,7 +1,10 @@
 import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer';
+import { MindUtils } from 'mind-sdk/MindUtils';
+
 import MindPixiText from 'mind-sdk/mindPixi/text/MindPixiText';
 
 const ZERO = 0;
+const ONE = 1;
 const HALF = 0.5;
 const DEFAULT_GLOW_IN_TIME = 0.4;
 const DEFAULT_GLOW_OUT_TIME = 0.01;
@@ -368,7 +371,17 @@ export class GlowText extends MindPixiContainer {
 		// MindGameObject super.constructor tries to extract the styles for this component.
 		if (!this._themeStyleId) return;
 
-		return theme.getStyles(this._themeStyleId);
+		let styleId = this._themeStyleId;
+		const styleIdSeparatorIndex = styleId.indexOf('/');
+		if (styleIdSeparatorIndex > ZERO) {
+			styleId = this._themeStyleId.substring(ZERO, styleIdSeparatorIndex);
+			const fontStylePath = this._themeStyleId.substring(styleIdSeparatorIndex + ONE);
+			const style = theme.getStyles(styleId);
+			const fontStyle = MindUtils.getValSlashIterator(fontStylePath, style);
+			return fontStyle;
+		} else {
+			return theme.getStyles(styleId);
+		}
 	}
 
 	static getDefaultThemeData () {
