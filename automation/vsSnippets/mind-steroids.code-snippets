@@ -325,6 +325,40 @@
 	},
 	// #endregion POSITIONING ALGORITHMS
 
+	"BasicComponent": {
+		"scope": "javascript", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
+		"prefix": "create",
+		"body": [
+			"import { MindPixiContainer } from 'mind-sdk/mindPixi/MindPixiContainer'",
+
+			"export class ${1:_className} extends MindPixiContainer {",
+				"\tconstructor (themeStyleId = '${0:_themeId}') {",
+					"\t\tsuper();",
+					"\t\tthis._themeStyleId = themeStyleId;",
+					"\t\tthis._style = this._extractStyle(this.arena.theme);\n",
+
+					"\t\tthis.setupComponent();",
+				"\t}\n",
+
+				"\tsetupComponent () {\n",
+
+				"\t}\n",
+
+				"\t_extractStyle (theme) {",
+					"\t\t// Does nothing if _styleId is not defined... this occurs when the",
+					"\t\t// MindGameObject super.constructor tries to extract the styles for this component.",
+					"\t\tif (!this._themeStyleId) return;",
+
+					"\t\treturn theme.getStyles(this._themeStyleId);",
+				"\t}",
+			"}\n",
+
+			"export const styles = {\n",
+			"};\n"
+
+		]
+	},
+
 	// #region COMMENTS
 	"puzzleName": {
 		"scope": "javascript,jsonc", // json with comments. See all language identifiers: https://code.visualstudio.com/docs/languages/identifiers
